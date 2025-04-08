@@ -30,45 +30,5 @@ router.get('/:id',
   }
 );
 
-router.post('/',
-  passport.authenticate('jwt', { session: false }),
-  validatorHandler(createProductSchema, 'body'), // validador que creamos para asegurarnos que el producto que se crea tenga los requerimientos solicitados
-  async (req, res)=>{
-    try {
-      const body = req.body;
-      const newProduct = await service.create(body);
-      res.status(201).json(newProduct);
-    } catch (error) {
-      next(error);
-    }
-});
-
-router.patch('/:id',
-  passport.authenticate('jwt', { session: false }),
-  validatorHandler(getProductSchema, 'params'),
-  validatorHandler(updateProductSchema, 'body'),
-  async (req, res, next)=>{
-  try {
-    const { id } = req.params;
-    const body = req.body;
-    const product = await service.update(id, body);
-  res.json(product);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.delete('/:id',
-  passport.authenticate('jwt', { session: false }),
-  validatorHandler(getProductSchema, 'params'),
-  async (req, res, next)=>{
-    try {
-      const { id } = req.params;
-      const rta = await service.delete(id);
-      res.json(rta);
-    } catch (error) {
-      next(error);
-    }
-});
 
 module.exports = router;

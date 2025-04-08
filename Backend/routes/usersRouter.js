@@ -1,12 +1,17 @@
 const express = require('express');
+const passport = require('passport');
+
 const UsersService = require('./../services/usersServices');
 const { createUserSchema ,updateUserSchema, getUserSchema } = require('./../schemas/userSchema');
 const validatorHandler = require('./../middlewares/validatorHandler');
-
+const { checkAdminRole } = require('./../middlewares/authHandler');
 const router = express.Router();
 const service = new UsersService();
 
-router.get('/', async (req, res, next) => {
+router.get('/',
+  passport.authenticate('jwt', { session: false }),  // Autenticación de JWT
+  checkAdminRole,
+  async (req, res, next) => {
   try {
     const users = await service.find();  // Usa await para resolver la promesa
     res.json(users);  // Ahora 'users' tiene los datos de la consulta
@@ -16,6 +21,8 @@ router.get('/', async (req, res, next) => {
 });
 
 router.get('/:id',
+  passport.authenticate('jwt', { session: false }),  // Autenticación de JWT
+  checkAdminRole,
   validatorHandler(getUserSchema, "params"),
   async (req, res, next) => {
   try {
@@ -28,6 +35,8 @@ router.get('/:id',
 });
 
 router.post('/',
+  passport.authenticate('jwt', { session: false }),  // Autenticación de JWT
+  checkAdminRole,
   validatorHandler(createUserSchema, "body"),
   async (req, res, next)=>{
     try {
@@ -40,6 +49,8 @@ router.post('/',
 });
 
 router.patch('/:id',
+  passport.authenticate('jwt', { session: false }),  // Autenticación de JWT
+  checkAdminRole,
   validatorHandler(getUserSchema, 'params'),
   validatorHandler(updateUserSchema, 'body'),
   async (req, res , next)=>{
@@ -55,6 +66,7 @@ router.patch('/:id',
 
 router.delete('/:id',
   passport.authenticate('jwt', { session: false }),
+  checkAdminRole,
   validatorHandler(getUserSchema, 'params'),
   async (req, res, next)=>{
   try {

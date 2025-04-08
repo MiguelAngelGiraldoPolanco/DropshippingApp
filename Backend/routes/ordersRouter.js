@@ -33,12 +33,14 @@ router.post('/',
   }
 );
 
-router.post('/add-item',
-  validatorHandler(addItemSchema, "body"),
-  async (req, res, next)=>{
+router.post('/:id/items',
+  passport.authenticate('jwt', { session: false }),
+  validatorHandler(addItemSchema, 'body'),
+  async (req, res, next) => {
     try {
+      const { id } = req.params;
       const body = req.body;
-      const newItem = await service.addItem(body);
+      const newItem = await service.addItem({ orderId: id, ...body });
       res.status(201).json(newItem);
     } catch (error) {
       next(error);
