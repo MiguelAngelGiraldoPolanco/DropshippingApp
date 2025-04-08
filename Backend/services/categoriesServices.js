@@ -1,30 +1,48 @@
-const axios = require('axios');  // Si usas axios para hacer peticiones HTTP a AliExpress
+const axios = require('axios');
+const boom = require('@hapi/boom');
+const { categoriesResponseSchema } = require('../schemas/categorySchema');
 
-class CategoriesService {
-  constructor() {}
-
-  // Obtiene todas las categorías desde AliExpress
-  async find() {
+class CategoryService {
+  async fetchCategories(queryParams) {
     try {
-      const response = await axios.get('API_URL_ALIEXPRESS_CATEGORIES');  // URL de la API de AliExpress
-      return response.data;  // Retorna las categorías obtenidas de la API
+      // Realizar la solicitud a la API de AliExpress para obtener las categorías
+      const response = await axios.get('https://api.aliexpress.com/categories', {
+        params: queryParams, // Puedes agregar parámetros de búsqueda si es necesario
+      });
+
+      // Validar la respuesta utilizando el esquema
+      const categories = response.data.categories; // Suponiendo que AliExpress devuelve una lista de categorías
+
+      // Validar cada categoría con el esquema
+      await categoriesResponseSchema.validateAsync(categories);
+
+      return categories;
     } catch (error) {
-      throw new Error('Error al obtener las categorías de AliExpress');
+      throw boom.badImplementation('Error fetching categories from AliExpress');
     }
   }
-
-  // Obtiene una categoría específica desde AliExpress
   async findOne(id) {
-    try {
-      const response = await axios.get(`API_URL_ALIEXPRESS_CATEGORIES/${id}`);  // URL con el ID de la categoría
-      if (!response.data) {
-        throw new Error('Categoría no encontrada');
+      try {
+        const response = await axios.get(`https://api.aliexpress.com/categories/${id}`);
+        const category = response.data; // Suponiendo que AliExpress devuelve un solo producto
+
+        if (!category) {
+          throw boom.notFound('Category not found');
+        }
+
+        // Validar la categoria usando el esquema
+        await productResponseSchema.validateAsync(category); // Verifica que la categoria cumple con el esquema
+
+        return category;
+      } catch (error) {
+        console.error('Error fetching category from AliExpress:', error);
+        if (error.isBoom) {
+          throw error;  // Si el error es un Boom error, lo dejamos pasar
+        } else {
+          throw boom.notFound('Category not found');
+        }
       }
-      return response.data;  // Retorna la categoría específica
-    } catch (error) {
-      throw new Error('Error al obtener la categoría de AliExpress');
     }
-  }
 }
 
-module.exports = CategoriesService;
+module.exports = CategoryService;

@@ -9,13 +9,15 @@ const service = new CategoriesService();
 
 router.get('/',
   async (req, res, next) => {
-  try {
-    const categories =  await service.find();
-    res.json(categories);
-  } catch (error) {
-    next(error);
+    try {
+      // Obtener las categorías desde el servicio
+      const categories = await service.fetchCategories(req.query);
+      res.json(categories);  // Enviar las categorías como respuesta
+    } catch (error) {
+      next(error);  // Pasar el error al manejador de errores de Express
+    }
   }
-});
+);
 
 router.get('/:id',
   validatorHandler(getCategorySchema, 'params'),

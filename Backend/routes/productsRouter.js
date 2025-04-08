@@ -10,7 +10,7 @@ router.get('/',
   validatorHandler(queryProductSchema, 'query'), // validador que creamos para asegurarnos que el producto que se pide ver tenga los requerimientos solicitados
   async (req, res, next) => {
   try {
-    const products = await service.find(req.query);
+    const products = await service.fetchProductsFromAliExpress(req.query);
     res.json(products);
   } catch (error) {
     next(error);
