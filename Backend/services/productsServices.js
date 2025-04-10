@@ -1,62 +1,76 @@
-const axios = require('axios');
+const faker = require('@faker-js/faker');
 const boom = require('@hapi/boom');
-const productResponseSchema = require('../schemas/productResponseSchema');
+const { Op, where } = require('sequelize');
+
+const { models } = require('../libs/sequelize');
 
 class ProductsService {
-  async fetchProductsFromAliExpress(queryParams) {
-    try {
-      const response = await axios.get('https://api.aliexpress.com/products', {
-        params: queryParams, // Puedes agregar parámetros de búsqueda aquí
+
+  constructor(){}
+
+  generate() {
+    const limit = 100;
+    for (let index = 0; index < limit; index++) {
+      this.products.push({
+        name: faker.commerce.productName(),
+        price: parseInt(faker.commerce.price(), 10),
+        image: faker.image.imageUrl(),
+        isBlock: faker.datatype.boolean(),
       });
-
-      // Verificar si la respuesta contiene productos
-      if (!response.data || !response.data.products) {
-        throw boom.notFound('No products found');
-      }
-
-      const products = response.data.products; // Suponiendo que AliExpress devuelve una lista de productos
-
-      // Validar cada producto usando el esquema
-      const validProducts = [];
-      for (const product of products) {
-        try {
-          await productResponseSchema.validateAsync(product); // Verifica que el producto cumple con el esquema
-          validProducts.push(product);
-        } catch (validationError) {
-          console.error(`Product validation failed for ${product.productId}:`, validationError);
-          // Aquí podrías loguear el error o continuar con el siguiente producto si quieres omitir los que fallan
-        }
-      }
-
-      return validProducts; // Devuelves solo los productos válidos
-    } catch (error) {
-      console.error('Error fetching products from AliExpress:', error);
-      throw boom.badImplementation('Error fetching products from AliExpress');
     }
+  }
+
+  async create(data) {
+    const newProduct = await models.Product.create(data);
+    return newProduct;
+  }
+
+  async find(query) {
+    const options = {
+      include: ['category'],
+      where: {},
+    }
+    const { limit, offset } = query;
+    if (limit && offset) {
+      options.limit =  limit;
+      options.offset =  offset;
+    }
+    const { price } = query;
+    if (price) {
+      options.where.price = price;
+    }
+
+    const { price_min, price_max } = query;
+    if (price_min && price_max) {
+      options.where.price = {
+        [Op.gte]: price_min,
+        [Op.lte]: price_max,
+      };
+    }
+    const products = await models.Product.findAll(options);
+    return products;
   }
 
   async findOne(id) {
-    try {
-      const response = await axios.get(`https://api.aliexpress.com/products/${id}`);
-      const product = response.data; // Suponiendo que AliExpress devuelve un solo producto
-
+    const product = await models.Product.findByPk(id);
       if (!product) {
         throw boom.notFound('Product not found');
       }
-
-      // Validar el producto usando el esquema
-      await productResponseSchema.validateAsync(product); // Verifica que el producto cumple con el esquema
-
       return product;
-    } catch (error) {
-      console.error('Error fetching product from AliExpress:', error);
-      if (error.isBoom) {
-        throw error;  // Si el error es un Boom error, lo dejamos pasar
-      } else {
-        throw boom.notFound('Product not found');
-      }
-    }
   }
+
+  async update(id, changes) {
+    const product = await this.findOne(id);
+    const rta = product.update(changes);
+    return rta;
+  }
+
+  async delete(id) {
+    const product = await this.findOne(id);
+    await product.destroy();
+    return { id };
+  }
+
 }
 
 module.exports = ProductsService;

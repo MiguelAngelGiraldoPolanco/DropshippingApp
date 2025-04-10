@@ -1,14 +1,63 @@
 const Joi = require('joi');
 
-const productResponseSchema = Joi.object({
-  productId: Joi.string().required(), // ID único del producto de AliExpress
-  name: Joi.string().required(), // Nombre del producto
-  description: Joi.string().required(), // Descripción del producto
-  price: Joi.number().positive().required(), // Precio del producto
-  stock: Joi.number().integer().min(0).required(), // Stock disponible
-  imageUrl: Joi.string().uri().required(), // URL de la imagen
-  category: Joi.string().required(), // Categoría del producto
-  provider: Joi.string().valid('AliExpress').required(), // AliExpress como proveedor
+// Campos existentes
+const id = Joi.number().integer();
+const name = Joi.string().min(3).max(15);
+const price = Joi.number().integer().min(1);
+const image = Joi.string().uri();
+const description = Joi.string().min(10);
+const categoryId = Joi.number().integer();
+
+// Nuevos campos
+const estado = Joi.string().valid('Nuevo', 'Usado', 'Restaurado').required(); // Asegura que el estado sea uno de estos valores
+const marca = Joi.string().min(2).max(50).required(); // Marca debe ser una cadena de texto no vacía
+const modelo = Joi.string().min(1).max(50).required(); // El modelo también debe ser una cadena válida
+
+// Filtros
+const price_min = Joi.number().integer();
+const price_max = Joi.number().integer();
+
+const limit = Joi.number().integer();
+const offset = Joi.number().integer();
+
+const createProductSchema = Joi.object({
+  name: name.required(),
+  price: price.required(),
+  image: image.required(),
+  description: description.required(),
+  categoryId: categoryId.required(),
+  estado: estado,  // Agregado
+  marca: marca,     // Agregado
+  modelo: modelo    // Agregado
 });
 
-module.exports = productResponseSchema;
+const updateProductSchema = Joi.object({
+  name: name,
+  price: price,
+  image: image,
+  description: description,
+  categoryId,
+  estado,  // Agregado
+  marca,   // Agregado
+  modelo   // Agregado
+});
+
+const getProductSchema = Joi.object({
+  id: id.required(),
+});
+
+const queryProductSchema = Joi.object({
+  limit,
+  offset,
+  price,
+  price_min,
+  price_max: price_max.when('price_min', {
+    is: Joi.number().integer(),
+    then: Joi.required(),
+  }),
+  estado,   // Agregado para permitir filtrar por estado
+  marca,    // Agregado para permitir filtrar por marca
+  modelo,   // Agregado para permitir filtrar por modelo
+});
+
+module.exports = { createProductSchema, updateProductSchema, getProductSchema, queryProductSchema };

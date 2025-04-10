@@ -1,78 +1,73 @@
 const express = require('express');
 const passport = require('passport');
+
 const CustomersService = require('../services/customersServices');
-const { createCustomerSchema, updateCustomerSchema, getCustomerSchema } = require('../schemas/customerSchema');
+const { createCustomerSchema ,updateCustomerSchema, getCustomerSchema } = require('../schemas/customerSchema');
 const validatorHandler = require('../middlewares/validatorHandler');
 
 const router = express.Router();
 const service = new CustomersService();
 
-// Registrar un cliente (crear cuenta)
-router.post('/register',
-  validatorHandler(createCustomerSchema, "body"), // Validar los datos del cliente
-  async (req, res, next) => {
-    try {
-      const body = req.body;
-      const newCustomer = await service.create(body); // Crear usuario y cliente
-      res.status(201).json(newCustomer); // Devolver respuesta
-    } catch (error) {
-      next(error);
-    }
+router.get('/', async (req, res, next) => {
+  try {
+    const costomers = await service.find();  // Usa await para resolver la promesa
+    res.json(costomers);  // Ahora 'users' tiene los datos de la consulta
+  } catch (error) {
+    next(error);  // Pasar el error al manejador de errores de Express
+  }
 });
 
-// Iniciar sesión (autenticación)
-router.post('/login',
-  passport.authenticate('local', { session: false }), // Usar autenticación Passport (local)
-  async (req, res, next) => {
-    try {
-      const user = req.user;  // Usuario autenticado
-      const token = service.signToken(user);  // Generar token JWT
-      res.json({ token });  // Devolver el token
-    } catch (error) {
-      next(error);
-    }
-});
-
-// Obtener información del cliente (requiere autenticación)
 router.get('/:id',
-  passport.authenticate('jwt', { session: false }),  // Asegurarse de que el usuario esté autenticado
-  validatorHandler(getCustomerSchema, 'params'),
+  validatorHandler(getCustomerSchema, "params"),
   async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const customer = await service.findOne(id); // Obtener datos del cliente
-      res.json(customer);
-    } catch (error) {
-      next(error);
-    }
+  try {
+    const { id } = req.params;
+    const costomer = await service.findOne(id);
+    res.json(costomer);
+  } catch (error) {
+    next(error);
+  }
 });
 
-// Actualizar la información del cliente (requiere autenticación)
-router.patch('/:id',
-  passport.authenticate('jwt', { session: false }), // Requiere autenticación
-  validatorHandler(updateCustomerSchema, "body"),  // Validar los datos de actualización
-  async (req, res, next) => {
+router.post('/',
+  passport.authenticate('jwt', { session: false }),
+  validatorHandler(createCustomerSchema, "body"),
+  async (req, res, next)=>{
     try {
-      const { id } = req.params;
       const body = req.body;
-      const updatedCustomer = await service.update(id, body);  // Actualizar la información del cliente
-      res.json(updatedCustomer);
+      const newCostomer = await service.create(body);
+      res.status(201).json(newCostomer);
     } catch (error) {
       next(error);
     }
 });
 
-// Eliminar cuenta de cliente (opcional, si es necesario)
+router.patch('/:id',
+  passport.authenticate('jwt', { session: false }),
+  validatorHandler(getCustomerSchema, 'params'),
+  validatorHandler(updateCustomerSchema, 'body'),
+  async (req, res , next)=>{
+  try {
+    const { id } = req.params;
+    const body = req.body;
+    const costomer = await service.update(id, body);
+    res.json(costomer);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.delete('/:id',
-  passport.authenticate('jwt', { session: false }), // Requiere autenticación
-  async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const result = await service.delete(id); // Eliminar cliente
-      res.json(result);
-    } catch (error) {
-      next(error);
-    }
+  passport.authenticate('jwt', { session: false }),
+  validatorHandler(getCustomerSchema, 'params'),
+  async (req, res, next)=>{
+  try {
+    const { id } = req.params;
+    const rta = await service.delete(id);
+    res.json(rta);
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;

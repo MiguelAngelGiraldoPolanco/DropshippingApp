@@ -1,14 +1,23 @@
 const Joi = require('joi');
 
-// Esquema para una categoría individual
-const categorySchema = Joi.object({
-  categoryId: Joi.string().required(), // ID único de la categoría
-  name: Joi.string().required(), // Nombre de la categoría
-  parentId: Joi.string().optional(), // ID de la categoría principal, si es una subcategoría
-  description: Joi.string().optional(), // Descripción opcional de la categoría
+const id = Joi.number().integer();
+const name= Joi.string().min(3).max(15);
+const image = Joi.string().uri();
+
+
+const createCategorySchema = Joi.object({
+  name: name.required(),
+  image: image.required(),
 });
 
-// Esquema para la respuesta de las categorías (puede ser una lista de categorías)
-const categoriesResponseSchema = Joi.array().items(categorySchema);
+const updateCategorySchema = Joi.object({
+  name: name,
+  image: image,
+});
 
-module.exports = { categoriesResponseSchema };
+const getCategorySchema = Joi.object({
+  id: id.required(),
+});
+
+module.exports = { createCategorySchema ,updateCategorySchema, getCategorySchema };
+
