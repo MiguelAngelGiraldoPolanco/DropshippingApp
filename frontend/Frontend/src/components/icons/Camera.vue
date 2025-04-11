@@ -1,8 +1,8 @@
 <template>
     <div>
-      <a href="http://localhost:5173" target="_blank">
+      <router-link to="/">
         <font-awesome-icon :icon="['fas', 'camera-retro']" />
-      </a>
+      </router-link>
     </div>
   </template>
 

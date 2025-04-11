@@ -1,16 +1,12 @@
 <script>
 import Header from './components/Header.vue';
-import ImageContainer from './components/ImageContainer.vue';
-import Steps from './components/Steps.vue';
 import Footer from './components/Footer.vue';
 
 export default {
   name: 'App',
   components: {
     Header,
-    ImageContainer,
-    Steps,
-    Footer
+    Footer,
   }
 };
 </script>
@@ -18,8 +14,7 @@ export default {
 <template>
   <div>
     <Header />
-    <ImageContainer />
-    <Steps />
+    <router-view />
     <Footer />
   </div>
 </template>

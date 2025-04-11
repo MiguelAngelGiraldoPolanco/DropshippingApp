@@ -7,25 +7,28 @@
         <Facebook />
         <X/>
         <Linkedin />
+        <router-link to="/privacy-policy" >Privacy Policy</router-link>
       </div>
+      
     </footer>
   </template>
   
   <script>
-  import Facebook from './icons/Facebook.vue';
-  import Instagram from './icons/Instagram.vue';
-  import X from './icons/X.vue';
-  import Linkedin from './icons/Linkedin.vue';
-  
-  export default {
-    name: 'Footer',
-    components: {
-      Instagram,
-      Facebook,
-      X,
-      Linkedin, 
-    },
-  };
+    import Facebook from './icons/Facebook.vue';
+    import Instagram from './icons/Instagram.vue';
+    import X from './icons/X.vue';
+    import Linkedin from './icons/Linkedin.vue';
+
+    
+    export default {
+      name: 'Footer',
+      components: {
+        Instagram,
+        Facebook,
+        X,
+        Linkedin,
+      },
+    };
   </script>
   
   <style scoped>
