@@ -1,6 +1,10 @@
 <template>
     <div class="image-container">
-      <img src="../assets/images/homeImages.jpg" alt="Vintage Camera">
+      <picture>
+        <source srcset="../assets/images/homeImages.webp" type="image/webp">       
+        <img src="../assets/images/homeImages.jpg" alt="Vintage Camera">
+      </picture>
+        
       <h1 class="overlay-text">Discover your perfect vintage camera</h1>
     </div>
   </template>

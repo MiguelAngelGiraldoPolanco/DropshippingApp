@@ -1,17 +1,26 @@
 <template>
     <div class="steps-container">
       <div class="step_one">
-        <img src="../assets/images/step1Image.jpg" alt="cameras">
+        <picture>
+          <source srcset="../assets/images/step1Image.webp" type="image/webp" width="100%" height="auto">
+          <img src="../assets/images/step1Image.jpg" alt="cameras" width="100%" height="auto">
+        </picture>
         <h3>Step 1: Browse our</h3>
         <p>Find your dream camera or explore by category.</p>
       </div>
       <div class="step_two">
-        <img src="../assets/images/step2Image.jpg" alt="cart">
+        <picture>
+          <source srcset="../assets/images/step2Image.webp" type="image/webp" width="100%" height="auto">
+          <img src="../assets/images/step2Image.jpg" alt="cart" width="100%" height="auto">
+        </picture>
         <h3>Step 2: View</h3>
         <p>Choose your favorite camera. Capture memories with a touch of nostalgia.</p>
       </div>
       <div class="step_three">
-        <img src="../assets/images/step3Images.jpg" alt="women">
+        <picture>
+          <source srcset="../assets/images/step3Images.webp" type="image/webp" width="100%" height="auto">
+          <img src="../assets/images/step3Images.jpg" alt="women">
+        </picture>
         <h3>Step 3: Add to cart</h3>
         <p>Complete your purchase. Get ready to embark on journey through time.</p>
       </div>
