@@ -7,9 +7,9 @@
       </div>
       <button class="menu-toggle" @click="toggleMenu">☰</button>
       <nav :class="{ open: isMenuOpen }">
-        <RouterLink to="/" class="nav-link">Explore</RouterLink>
-        <RouterLink to="/about" class="nav-link">Sign Up</RouterLink>
-        <RouterLink to="/about" class="nav-link">Register</RouterLink>
+        <RouterLink to="/explore" class="nav-link">Explore</RouterLink>
+        <RouterLink to="/login" class="nav-link">Sign Up</RouterLink>
+        <RouterLink to="/register" class="nav-link">Register</RouterLink>
       </nav>
     </div>
   </header>
