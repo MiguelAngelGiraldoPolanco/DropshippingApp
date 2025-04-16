@@ -47,17 +47,14 @@ const getProductSchema = Joi.object({
 });
 
 const queryProductSchema = Joi.object({
-  limit,
-  offset,
-  price,
-  price_min,
-  price_max: price_max.when('price_min', {
-    is: Joi.number().integer(),
-    then: Joi.required(),
-  }),
-  estado,   // Agregado para permitir filtrar por estado
-  marca,    // Agregado para permitir filtrar por marca
-  modelo,   // Agregado para permitir filtrar por modelo
+  limit: Joi.number().integer().optional(),
+  offset: Joi.number().integer().optional(),
+  price: Joi.number().optional(),
+  price_min: Joi.number().optional(),
+  price_max: Joi.number().optional(),
+  estado: Joi.string().optional(), // Ahora es opcional
+  marca: Joi.string().optional(),  // Ahora es opcional
+  modelo: Joi.string().optional(), // Ahora es opcional
 });
 
 module.exports = { createProductSchema, updateProductSchema, getProductSchema, queryProductSchema };
