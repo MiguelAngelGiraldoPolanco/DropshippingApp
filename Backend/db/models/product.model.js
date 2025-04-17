@@ -31,7 +31,7 @@ const ProductSchema = {
     allowNull: false,
   },
   stock: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   estado: {

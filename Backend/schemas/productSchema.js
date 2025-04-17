@@ -1,45 +1,51 @@
 const Joi = require('joi');
 
-// Campos existentes
+// Campos base
 const id = Joi.number().integer();
-const name = Joi.string().min(3).max(15);
+const name = Joi.string().min(3).max(100);
 const price = Joi.number().integer().min(1);
 const image = Joi.string().uri();
 const description = Joi.string().min(10);
 const categoryId = Joi.number().integer();
 
-// Nuevos campos
-const estado = Joi.string().valid('Nuevo', 'Usado', 'Restaurado').required(); // Asegura que el estado sea uno de estos valores
-const marca = Joi.string().min(2).max(50).required(); // Marca debe ser una cadena de texto no vacía
-const modelo = Joi.string().min(1).max(50).required(); // El modelo también debe ser una cadena válida
+// Nuevos campos del modelo
+const estado = Joi.string().valid('Nuevo', 'Usado', 'Restaurado');
+const marca = Joi.string().min(2).max(50);
+const modelo = Joi.string().min(1).max(50);
+const fabricacion = Joi.number().integer().min(1800).max(new Date().getFullYear());
+const stock = Joi.number().integer().min(0);
+const createdAt = Joi.date(); // Solo se usaría en GETs o lecturas
 
 // Filtros
 const price_min = Joi.number().integer();
 const price_max = Joi.number().integer();
-
 const limit = Joi.number().integer();
 const offset = Joi.number().integer();
 
 const createProductSchema = Joi.object({
   name: name.required(),
   price: price.required(),
+  fabricacion: fabricacion.required(),
   image: image.required(),
   description: description.required(),
+  stock: stock.required(),
+  estado: estado.required(),
+  marca: marca.required(),
+  modelo: modelo.required(),
   categoryId: categoryId.required(),
-  estado: estado,  // Agregado
-  marca: marca,     // Agregado
-  modelo: modelo    // Agregado
 });
 
 const updateProductSchema = Joi.object({
-  name: name,
-  price: price,
-  image: image,
-  description: description,
+  name,
+  price,
+  fabricacion,
+  image,
+  description,
+  stock,
+  estado,
+  marca,
+  modelo,
   categoryId,
-  estado,  // Agregado
-  marca,   // Agregado
-  modelo   // Agregado
 });
 
 const getProductSchema = Joi.object({
@@ -47,14 +53,29 @@ const getProductSchema = Joi.object({
 });
 
 const queryProductSchema = Joi.object({
-  limit: Joi.number().integer().optional(),
-  offset: Joi.number().integer().optional(),
-  price: Joi.number().optional(),
-  price_min: Joi.number().optional(),
-  price_max: Joi.number().optional(),
-  estado: Joi.string().optional(), // Ahora es opcional
-  marca: Joi.string().optional(),  // Ahora es opcional
-  modelo: Joi.string().optional(), // Ahora es opcional
-});
+  limit,
+  offset,
+  price,
+  price_min,
+  price_max,
+  estado,
+  marca,
+  modelo,
+}).with('price_min', 'price_max') // Si hay price_min, debe haber price_max
+  .with('price_max', 'price_min') // Y viceversa
+  .custom((value, helpers) => {
+    if (value.price_min && value.price_max && value.price_min > value.price_max) {
+      return helpers.message('"price_min" debe ser menor o igual que "price_max"');
+    }
+    return value;
+  });
 
-module.exports = { createProductSchema, updateProductSchema, getProductSchema, queryProductSchema };
+const bulkCreateProductSchema = Joi.array().items(createProductSchema).min(1);
+
+module.exports = {
+  createProductSchema,
+  updateProductSchema,
+  getProductSchema,
+  queryProductSchema,
+  bulkCreateProductSchema,
+};

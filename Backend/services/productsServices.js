@@ -81,6 +81,12 @@ class ProductsService {
     return { id };
   }
 
+  async createBulk(productsArray) {
+    const createdProducts = await models.Product.bulkCreate(productsArray, {
+      validate: true
+    });
+    return createdProducts;
+  }
 }
 
 module.exports = ProductsService;

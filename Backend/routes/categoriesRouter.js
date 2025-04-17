@@ -11,8 +11,8 @@ const router = express.Router();
 const service = new CategoriesService();
 
 router.get('/',
-  passport.authenticate('jwt', {session: false}),
-  checkRoles('admin', 'customer'),
+  // passport.authenticate('jwt', {session: false}),
+  // checkRoles('admin', 'customer'),
   async (req, res, next) => {
   try {
     const categories =  await service.find();
@@ -23,8 +23,8 @@ router.get('/',
 });
 
 router.get('/:id',
-  passport.authenticate('jwt', {session: false}),
-  checkRoles('admin', 'customer'),
+  // passport.authenticate('jwt', {session: false}),
+  // checkRoles('admin', 'customer'),
   validatorHandler(getCategorySchema, 'params'),
   async (req, res, next) => {
     try {
@@ -38,8 +38,8 @@ router.get('/:id',
 });
 
 router.post('/',
-  passport.authenticate('jwt', { session: false }),
-  checkRoles('admin'),
+  // passport.authenticate('jwt', { session: false }),
+  // checkRoles('admin'),
   validatorHandler(createCategorySchema, 'body'),
   async (req, res, next)=>{
     try {
@@ -69,8 +69,8 @@ router.patch('/:id',
 });
 
 router.delete('/:id',
-  passport.authenticate('jwt', { session: false }),
-  checkRoles('admin'),
+  // passport.authenticate('jwt', { session: false }),
+  // checkRoles('admin'),
   validatorHandler(getCategorySchema, 'params'),
   async (req, res, next)=>{
   try {
