@@ -10,6 +10,9 @@
         <RouterLink to="/explore" class="nav-link">Explore</RouterLink>
         <RouterLink to="/login" class="nav-link">Sign Up</RouterLink>
         <RouterLink to="/register" class="nav-link">Register</RouterLink>
+        <div class="logo">
+          <Car />
+        </div>
       </nav>
     </div>
   </header>
@@ -17,10 +20,12 @@
   
 <script>
 import Camera from './icons/Camera.vue';
+import Car from './icons/Car.vue';
 export default {
   name: 'Header',
   components: {
-    Camera
+    Camera,
+    Car
   },
   data() {
     return {

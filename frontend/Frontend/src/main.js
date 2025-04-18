@@ -9,9 +9,9 @@ import router from './router'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faInstagram, faFacebook, faTwitter, faLinkedin } from '@fortawesome/free-brands-svg-icons'
-import { faCameraRetro } from '@fortawesome/free-solid-svg-icons';
+import { faCameraRetro, faCartShopping } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faInstagram, faFacebook, faTwitter, faLinkedin, faCameraRetro)
+library.add(faInstagram, faFacebook, faTwitter, faLinkedin, faCameraRetro, faCartShopping)
 
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)
