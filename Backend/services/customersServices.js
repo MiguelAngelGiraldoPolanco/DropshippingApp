@@ -1,68 +1,52 @@
-const { models } = require('../libs/sequelize');
+const { models }= require('../libs/sequelize')
+const bcrypt = require('bcrypt');
 const boom = require('@hapi/boom');
-const bcrypt = require('bcrypt');  // Para manejar contraseñas de forma segura
-const jwt = require('jsonwebtoken');  // Para generar tokens JWT
 
-class CustomersService {
-  // Crear un nuevo usuario y cliente
-  async create(data) {
-    const { email, password, ...customerData } = data;
+class CustomersService{
 
-    // Verificar si ya existe un usuario con ese email
-    const existingUser = await models.User.findOne({ where: { email } });
-    if (existingUser) {
-      throw boom.badRequest('Email already exists');
-    }
+  constructor(){}
 
-    // Hashear la contraseña antes de guardarla
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Crear un nuevo usuario
-    const newUser = await models.User.create({
-      email,
-      password: hashedPassword,  // Almacenar la contraseña hasheada
+  async create(data){
+      const hash = await bcrypt.hash(data.user.password, 10);
+      const newData = {
+        ...data,
+        user: {
+          ...data.user,
+          password: hash,
+        }
+      };
+      const newCostomer = await models.Customer.create(newData, {
+        include: ['user']
     });
-
-    // Crear el cliente y vincularlo con el usuario
-    const newCustomer = await models.Customer.create({
-      user_id: newUser.id,  // Relacionar el cliente con el usuario
-      ...customerData,  // Otros datos del cliente
-    });
-
-    return newCustomer;
+      delete newCostomer.user.dataValues.password;
+      return newCostomer;
+  }
+   // ejemplo de como conectar y hacer una consulta a la base de datos que tengo en libs postgres.js
+  async find(){
+      const rta = await models.Customer.findAll({
+        include: ['user']
+      });
+      return rta;  // Retorna los usuarios encontrados.
   }
 
-  // Buscar un cliente por su ID (y devolver también su información de usuario)
-  async findOne(id) {
-    const customer = await models.Customer.findByPk(id, {
-      include: [{ model: models.User, attributes: ['email'] }]  // Incluir datos del usuario (email)
-    });
-
-    if (!customer) {
-      throw boom.notFound('Customer not found');
-    }
-
-    return customer;
+  async findOne(id){
+      const costomer = await models.Customer.findByPk(id);
+      if (!costomer) {
+        throw boom.notFound('User not found');
+      }
+      return costomer;
   }
 
-  // Actualizar la información del cliente
-  async update(id, changes) {
-    const customer = await this.findOne(id);
-    return customer.update(changes);
+  async update(id, changes){
+      const costomer = await this.findOne(id);
+      const rta = costomer.update(changes);
+      return rta;
   }
 
-  // Eliminar un cliente
-  async delete(id) {
-    const customer = await this.findOne(id);
-    await customer.destroy();
-    return { id };
-  }
-
-  // Generar un token JWT para el usuario (esto lo usas cuando el cliente inicia sesión)
-  signToken(user) {
-    const payload = { sub: user.id };  // El 'sub' es el ID del usuario
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-    return token;
+  async delete(id){
+      const costomer = await this.findOne(id);
+      await costomer.destroy();
+      return { id };
   }
 }
 

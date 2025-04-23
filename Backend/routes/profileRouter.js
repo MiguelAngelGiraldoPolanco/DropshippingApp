@@ -4,7 +4,7 @@ const passport = require('passport');
 const OrdersService = require('./../services/ordersServices');
 
 const router = express.Router();
-const service = new CategoriesService();
+const service = new OrdersService();
 
 router.get('/my-orders',
   passport.authenticate('jwt', {session: false}),

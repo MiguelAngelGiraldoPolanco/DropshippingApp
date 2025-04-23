@@ -7,11 +7,13 @@ const phone = Joi.string();
 const userId = Joi.number().integer();
 const email = Joi.string().email();
 const password = Joi.string();
+const address = Joi.string().min(3).max(100);
 
 const createCustomerSchema = Joi.object({
   name: name.required(),
   lastName: lastName.required(),
   phone: phone.required(),
+  address: address.required(),
   user: Joi.object({
     email: email.required(),
     password: password.required()
@@ -23,6 +25,10 @@ const updateCustomerSchema = Joi.object({
   lastName,
   phone,
   userId,
+  address,
+  user: Joi.object({
+    password
+  })
 });
 
 const getCustomerSchema = Joi.object({

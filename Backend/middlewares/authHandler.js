@@ -29,5 +29,4 @@ function checkRoles(...roles) {
     }
   }
 }
-
 module.exports = { checkApiKey, checkAdminRole, checkRoles };

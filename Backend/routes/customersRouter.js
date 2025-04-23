@@ -1,78 +1,90 @@
 const express = require('express');
 const passport = require('passport');
+
 const CustomersService = require('../services/customersServices');
-const { createCustomerSchema, updateCustomerSchema, getCustomerSchema } = require('../schemas/customerSchema');
+const { createCustomerSchema ,updateCustomerSchema, getCustomerSchema } = require('../schemas/customerSchema');
 const validatorHandler = require('../middlewares/validatorHandler');
+const UserService = require('../services/usersServices');
 
 const router = express.Router();
 const service = new CustomersService();
+const userService = new UserService();
 
-// Registrar un cliente (crear cuenta)
-router.post('/register',
-  validatorHandler(createCustomerSchema, "body"), // Validar los datos del cliente
-  async (req, res, next) => {
-    try {
-      const body = req.body;
-      const newCustomer = await service.create(body); // Crear usuario y cliente
-      res.status(201).json(newCustomer); // Devolver respuesta
-    } catch (error) {
-      next(error);
-    }
+router.get('/', async (req, res, next) => {
+  try {
+    const costomers = await service.find();  // Usa await para resolver la promesa
+    res.json(costomers);  // Ahora 'users' tiene los datos de la consulta
+  } catch (error) {
+    next(error);  // Pasar el error al manejador de errores de Express
+  }
 });
 
-// Iniciar sesión (autenticación)
-router.post('/login',
-  passport.authenticate('local', { session: false }), // Usar autenticación Passport (local)
-  async (req, res, next) => {
-    try {
-      const user = req.user;  // Usuario autenticado
-      const token = service.signToken(user);  // Generar token JWT
-      res.json({ token });  // Devolver el token
-    } catch (error) {
-      next(error);
-    }
-});
-
-// Obtener información del cliente (requiere autenticación)
 router.get('/:id',
-  passport.authenticate('jwt', { session: false }),  // Asegurarse de que el usuario esté autenticado
-  validatorHandler(getCustomerSchema, 'params'),
+  validatorHandler(getCustomerSchema, "params"),
   async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const customer = await service.findOne(id); // Obtener datos del cliente
-      res.json(customer);
-    } catch (error) {
-      next(error);
-    }
+  try {
+    const { id } = req.params;
+    const costomer = await service.findOne(id);
+    res.json(costomer);
+  } catch (error) {
+    next(error);
+  }
 });
 
-// Actualizar la información del cliente (requiere autenticación)
-router.patch('/:id',
-  passport.authenticate('jwt', { session: false }), // Requiere autenticación
-  validatorHandler(updateCustomerSchema, "body"),  // Validar los datos de actualización
+router.post(
+  '/',
+  // passport.authenticate('jwt', { session: false }), // Descomentado si es necesario para autenticar
+  validatorHandler(createCustomerSchema, "body"),
   async (req, res, next) => {
     try {
-      const { id } = req.params;
       const body = req.body;
-      const updatedCustomer = await service.update(id, body);  // Actualizar la información del cliente
-      res.json(updatedCustomer);
+      console.log("Datos recibidos:", body);
+
+
+      // Verificar si ya existe un cliente con el mismo correo
+      const existingCustomer = await userService.findByEmail(body.user.email); // Asegúrate de tener esta función en tu servicio
+
+      if (existingCustomer) {
+        // Si ya existe, devolver un error 409
+        return res.status(409).json({ error: 'Email already in use' });
+      }
+
+      // Si no existe, crear el nuevo cliente
+      const newCustomer = await service.create(body);
+      res.status(201).json(newCustomer);
     } catch (error) {
       next(error);
     }
+  }
+);
+
+
+router.patch('/:id',
+  passport.authenticate('jwt', { session: false }),
+  validatorHandler(getCustomerSchema, 'params'),
+  validatorHandler(updateCustomerSchema, 'body'),
+  async (req, res , next)=>{
+  try {
+    const { id } = req.params;
+    const body = req.body;
+    const costomer = await service.update(id, body);
+    res.json(costomer);
+  } catch (error) {
+    next(error);
+  }
 });
 
-// Eliminar cuenta de cliente (opcional, si es necesario)
 router.delete('/:id',
-  passport.authenticate('jwt', { session: false }), // Requiere autenticación
-  async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const result = await service.delete(id); // Eliminar cliente
-      res.json(result);
-    } catch (error) {
-      next(error);
-    }
+  passport.authenticate('jwt', { session: false }),
+  validatorHandler(getCustomerSchema, 'params'),
+  async (req, res, next)=>{
+  try {
+    const { id } = req.params;
+    const rta = await service.delete(id);
+    res.json(rta);
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const express = require('express');
+const passport = require('passport');
+
 const UsersService = require('./../services/usersServices');
 const { createUserSchema ,updateUserSchema, getUserSchema } = require('./../schemas/userSchema');
 const validatorHandler = require('./../middlewares/validatorHandler');

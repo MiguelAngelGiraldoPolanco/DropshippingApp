@@ -1,30 +1,42 @@
-const axios = require('axios');  // Si usas axios para hacer peticiones HTTP a AliExpress
+const { models }= require('../libs/sequelize')
 
-class CategoriesService {
-  constructor() {}
+const boom = require('@hapi/boom');
 
-  // Obtiene todas las categorías desde AliExpress
-  async find() {
-    try {
-      const response = await axios.get('API_URL_ALIEXPRESS_CATEGORIES');  // URL de la API de AliExpress
-      return response.data;  // Retorna las categorías obtenidas de la API
-    } catch (error) {
-      throw new Error('Error al obtener las categorías de AliExpress');
-    }
+class CategoriesService{
+  constructor(){}
+
+async create(data){
+  const newCategory = await models.Category.create(data);
+  return newCategory;
+}
+
+async find(){
+  const rta = await models.Category.findAll();
+  return rta;
+}
+
+async findOne(id){
+  const category = await models.Category.findByPk(id, {
+    include: ['products']
+  });
+  if (!category) {
+    throw boom.notFound('Category not found');
   }
+  return category;
+}
 
-  // Obtiene una categoría específica desde AliExpress
-  async findOne(id) {
-    try {
-      const response = await axios.get(`API_URL_ALIEXPRESS_CATEGORIES/${id}`);  // URL con el ID de la categoría
-      if (!response.data) {
-        throw new Error('Categoría no encontrada');
-      }
-      return response.data;  // Retorna la categoría específica
-    } catch (error) {
-      throw new Error('Error al obtener la categoría de AliExpress');
-    }
-  }
+async update(id, changes){
+  const category = await this.findOne(id);
+  const rta = category.update(changes);
+  return rta;
+}
+
+async delete(id){
+  const category = await this.findOne(id);
+  await category.destroy();
+  return { id };
+}
+
 }
 
 module.exports = CategoriesService;

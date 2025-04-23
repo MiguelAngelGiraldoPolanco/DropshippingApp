@@ -5,7 +5,7 @@ function sessionHandler(req, res, next) {
     secret: 'yourSecretKey',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true, httpOnly: true }
+    cookie: { secure: false, httpOnly: true }
   });
   next();
 }

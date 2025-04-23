@@ -13,10 +13,10 @@ const port = process.env.PORT || 3005;
 
 app.use(express.json());
 // Uso global de los middlewares
-app.use(logRequest);
-app.use(corsHandler);
-app.use(sessionHandler);
-app.use(securityHeaders);
+// app.use(logRequest);
+// app.use(corsHandler);
+// app.use(sessionHandler);
+// app.use(securityHeaders);
 
 const whitelist = ['http://localhost:8080', 'https://myapp.com']; // esta es la lista de los dominios que tienen acceso a mi api
 
@@ -40,8 +40,8 @@ routerApi(app);
 // deben declararse despues de router despues que la app este levantada
 // deben ir en orden segun nos interese en este caso el errorhandler no tiene next y mata la app
 app.use(logErrors);
-app.use(ormErrorHandler);
 app.use(boomErrorHandler);
+app.use(ormErrorHandler);
 app.use(errorHandler);
 
 
