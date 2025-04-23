@@ -23,11 +23,20 @@ class UsersService{
       return rta;  // Retorna los usuarios encontrados.
   }
 
-  async findByEmail(email){
-    const rta = await models.User.findOne({
-      where: { email },
-    });
-    return rta;
+  async findByEmail(email) {
+    if (!email) {
+      throw new Error('El correo electrónico es obligatorio');
+    }
+
+    try {
+      const user = await models.User.findOne({
+        where: { email },
+      });
+      return user; // Devuelve el usuario si existe
+    } catch (error) {
+      console.error('Error al buscar el correo electrónico en la tabla User:', error);
+      throw new Error('Error al verificar el correo electrónico');
+    }
   }
 
   async findOne(id){

@@ -23,8 +23,21 @@
           <input type="password" id="confirmPassword" v-model="confirmPassword" required />
         </div>
         <div class="form-group">
-          <label for="dob">Date of Birth</label>
-          <input type="date" id="dob" v-model="dob" required />
+          <label for="phone">Phone</label>
+          <input
+            type="tel"
+            id="phone"
+            v-model="phone"
+            required
+            :class="{ invalid: phoneError }"
+            pattern="^(\+34)?[0-9]{9}$"
+            @input="formatPhone"
+          />
+        <span v-if="phoneError" class="error-message">Phone must be +34 followed by 9 digits.</span>
+        </div>
+        <div class="form-group">
+          <label for="adress">Adress</label>
+          <input type="adress" id="adress" v-model="adress" required />
         </div>
         <button type="submit" class="register-button">Register</button>
       </form>
@@ -32,37 +45,82 @@
   </template>
   
   <script>
-  export default {
-    name: 'RegisterForm',
-    data() {
-      return {
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        dob: '',
-      };
+import { usePostData } from '../composables/usePostData';
+
+export default {
+  name: 'RegisterForm',
+  data() {
+    return {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      phone: '',
+      adress: '',
+      phoneError: false,  // <-- Aquí
+      response: null,
+    };
+  },
+  methods: {
+    formatPhone(e) {
+      this.phone = this.phone.replace(/\s+/g, '').replace(/[^0-9+]/g, '');
+
+      if (!this.phone.startsWith('+34')) {
+        this.phone = '+34' + this.phone.replace(/^(\+34)/, '');
+      }
+
+      const phoneDigits = this.phone.replace(/\D/g, '');
+
+      // Actualizamos el error antes de usarlo
+      const isValid = phoneDigits.length === 12; // +34 (3) + 9 dígitos
+
+       // Disable form submission if the phone number is invalid
+       if (!this.phoneError) {
+        e.target.setCustomValidity('');
+      } else {
+        e.target.setCustomValidity('Phone must be +34 followed by 9 digits.');
+      }
     },
-    methods: {
-      handleRegister() {
-        if (this.password !== this.confirmPassword) {
-          alert('Passwords do not match!');
-          return;
-        }
-        // Aquí podrías conectar con tu backend
-        console.log('Registro:', {
-          firstName: this.firstName,
-          lastName: this.lastName,
-          email: this.email,
-          password: this.password,
-          dob: this.dob,
-        });
-        alert('Registration successful (mock)!');
-      },
+    handlePhoneInvalid(e) {
+      this.phoneError = true;
+      e.target.setCustomValidity("El número debe empezar con +34 y tener 9 dígitos.");
     },
+    async handleRegister() {
+      
+  if (this.password !== this.confirmPassword) {
+    alert('Passwords do not match!');
+    return;
+  }
+
+  if (!this.firstName || !this.lastName || !this.email || !this.password || !this.phone || !this.adress) {
+    alert('Please fill in all fields!');
+    return;
+  }
+
+  const { postData, response, error } = usePostData();
+  try{
+    const serverResponse = await postData('http://localhost:3005/api/v1/customers', {
+      name: this.firstName,
+      lastName: this.lastName,
+      phone: this.phone,
+      address: this.adress,
+      user: {
+        email: this.email,
+        password: this.password
+      }
+    });
+    console.log('Registro exitoso!', serverResponse);
+    this.$router.push('/'); // Redirigir a la página de inicio de sesión
+  }catch (error) {
+    console.log("Error en el registro:", error.message); // ✅ Este sí lo ves en pantalla
+    alert(error.message); // o usa un modal, toast, etc.
+  }
+  
+},
+},
   };
-  </script>
+</script>
   
   <style scoped>
   .register-container {

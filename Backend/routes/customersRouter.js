@@ -4,9 +4,11 @@ const passport = require('passport');
 const CustomersService = require('../services/customersServices');
 const { createCustomerSchema ,updateCustomerSchema, getCustomerSchema } = require('../schemas/customerSchema');
 const validatorHandler = require('../middlewares/validatorHandler');
+const UserService = require('../services/usersServices');
 
 const router = express.Router();
 const service = new CustomersService();
+const userService = new UserService();
 
 router.get('/', async (req, res, next) => {
   try {
@@ -29,18 +31,33 @@ router.get('/:id',
   }
 });
 
-router.post('/',
-  passport.authenticate('jwt', { session: false }),
+router.post(
+  '/',
+  // passport.authenticate('jwt', { session: false }), // Descomentado si es necesario para autenticar
   validatorHandler(createCustomerSchema, "body"),
-  async (req, res, next)=>{
+  async (req, res, next) => {
     try {
       const body = req.body;
-      const newCostomer = await service.create(body);
-      res.status(201).json(newCostomer);
+      console.log("Datos recibidos:", body);
+
+
+      // Verificar si ya existe un cliente con el mismo correo
+      const existingCustomer = await userService.findByEmail(body.user.email); // Asegúrate de tener esta función en tu servicio
+
+      if (existingCustomer) {
+        // Si ya existe, devolver un error 409
+        return res.status(409).json({ error: 'Email already in use' });
+      }
+
+      // Si no existe, crear el nuevo cliente
+      const newCustomer = await service.create(body);
+      res.status(201).json(newCustomer);
     } catch (error) {
       next(error);
     }
-});
+  }
+);
+
 
 router.patch('/:id',
   passport.authenticate('jwt', { session: false }),
