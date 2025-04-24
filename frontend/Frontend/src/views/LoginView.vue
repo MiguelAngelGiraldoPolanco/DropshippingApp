@@ -11,29 +11,52 @@
           <input type="password" id="password" v-model="password" required />
         </div>
         <button type="submit" class="login-button">Log In</button>
+        <RouterLink to="/register" class="nav-link">Register</RouterLink>
       </form>
     </div>
   </template>
   
   <script>
-  export default {
-    name: 'LoginForm',
-    data() {
-      return {
-        email: '',
-        password: '',
-      };
+import { usePostData } from '../composables/usePostData';
+
+export default {
+  name: 'LoginForm',
+  data() {
+    return {
+      email: '',
+      password: '',
+    };
+  },
+  methods: {
+    async handleLogin() {
+      const { postData } = usePostData();
+      try {
+        const { response } = await postData('http://localhost:3005/api/v1/auth/login', {
+          email: this.email,
+          password: this.password,
+        });
+
+        console.log('Full response:', response );
+
+        const { token, user } = response.data;
+
+        
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+
+        alert(`Bienvenido, ${user.name}`);
+        this.$router.push('/');
+      } catch (error) {
+        console.error('Login failed:', error.response?.data || error.message);
+        alert('Credenciales incorrectas o error en servidor');
+      }
+
+      console.log('Email:', this.email);
+      console.log('Password:', this.password);
     },
-    methods: {
-      handleLogin() {
-        console.log('Email:', this.email);
-        console.log('Password:', this.password);
-        // Aquí podrías hacer una petición a un backend
-        alert('Login attempt!');
-      },
-    },
-  };
-  </script>
+  },
+};
+</script>
   
   <style scoped>
   .login-container {

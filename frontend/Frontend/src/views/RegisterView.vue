@@ -88,38 +88,38 @@ export default {
     },
     async handleRegister() {
       
-  if (this.password !== this.confirmPassword) {
-    alert('Passwords do not match!');
-    return;
-  }
-
-  if (!this.firstName || !this.lastName || !this.email || !this.password || !this.phone || !this.adress) {
-    alert('Please fill in all fields!');
-    return;
-  }
-
-  const { postData, response, error } = usePostData();
-  try{
-    const serverResponse = await postData('http://localhost:3005/api/v1/customers', {
-      name: this.firstName,
-      lastName: this.lastName,
-      phone: this.phone,
-      address: this.adress,
-      user: {
-        email: this.email,
-        password: this.password
+      if (this.password !== this.confirmPassword) {
+        alert('Passwords do not match!');
+        return;
       }
-    });
-    console.log('Registro exitoso!', serverResponse);
-    this.$router.push('/'); // Redirigir a la página de inicio de sesión
-  }catch (error) {
-    console.log("Error en el registro:", error.message); // ✅ Este sí lo ves en pantalla
-    alert(error.message); // o usa un modal, toast, etc.
-  }
-  
-},
-},
-  };
+
+      if (!this.firstName || !this.lastName || !this.email || !this.password || !this.phone || !this.adress) {
+        alert('Please fill in all fields!');
+        return;
+      }
+
+      const { postData, response, error } = usePostData();
+      try{
+        const serverResponse = await postData('http://localhost:3005/api/v1/customers', {
+          name: this.firstName,
+          lastName: this.lastName,
+          phone: this.phone,
+          address: this.adress,
+          user: {
+            email: this.email,
+            password: this.password
+          }
+        });
+        console.log('Registro exitoso!', serverResponse);
+        this.$router.push('/'); // Redirigir a la página de inicio de sesión
+      }catch (error) {
+        console.log("Error en el registro:", error.message); // ✅ Este sí lo ves en pantalla
+        alert(error.message); // o usa un modal, toast, etc.
+      }
+      
+    },
+  },
+};
 </script>
   
   <style scoped>

@@ -38,6 +38,11 @@ const router = createRouter({
       name: 'NotFound',
       component: () => import('../views/NotFoundView.vue'),
     },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('../views/CartView.vue'), 
+    },
 
   ],
 })

@@ -9,7 +9,7 @@
       <nav :class="{ open: isMenuOpen }">
         <RouterLink to="/explore" class="nav-link">Explore</RouterLink>
         <RouterLink to="/login" class="nav-link">Sign Up</RouterLink>
-        <RouterLink to="/register" class="nav-link">Register</RouterLink>
+        <!-- <RouterLink to="/register" class="nav-link">Register</RouterLink> -->
         <div class="logo">
           <Car />
         </div>

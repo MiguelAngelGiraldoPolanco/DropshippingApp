@@ -31,6 +31,7 @@ class UsersService{
     try {
       const user = await models.User.findOne({
         where: { email },
+        include:['customer'],
       });
       return user; // Devuelve el usuario si existe
     } catch (error) {

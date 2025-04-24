@@ -3,8 +3,8 @@ import axios from 'axios';
 export const usePostData = () => {
   const postData = async (url, data) => {
     try {
-      const response = await axios.post(url, data);
-      return { response: response.data, error: null };
+      const res = await axios.post(url, data);
+      return { response: res, error: null };
     } catch (error) {
       const mensaje = error?.response?.data?.error || "Error inesperado";
       console.error("Error en POST:", mensaje);
