@@ -19,8 +19,9 @@
   .image-container {
     position: relative;
     width: 100%;
-    height: 80vh;
+    height: 90vh;
     overflow: hidden;
+    margin-bottom: 10rem;
   }
   
   .image-container img {

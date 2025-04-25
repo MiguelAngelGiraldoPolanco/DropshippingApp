@@ -2,7 +2,7 @@
     <div class="cart-container">
       <div class="cart-items">
         <h1 class="title">Your Cart</h1>
-        <div v-if="cartItems.length === 0" class="empty-cart">
+        <div v-if="isEmpty" class="empty-cart">
           <h2>Cart is empty</h2>
           <p>Looks like you haven't added anything yet. Start shopping now!</p>
           <RouterLink to="/explore" class="register-button">Back to explore</RouterLink>
@@ -17,7 +17,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in cartItems" :key="index">
+            <tr v-for="(item, index) in items" :key="index">
               <td>{{ item.name }}</td>
               <td>{{ item.price }}</td>
               <td>{{ item.quantity }}</td>
@@ -55,26 +55,21 @@
     </div>
   </template>
   
-  <script>
+<script>
+  import { useCartStore } from '@/stores/cart';
+  import { mapState } from 'pinia';
+
   export default {
     name: 'CartView',
     data() {
       return {
-        cartItems: "",
-        //[
-        //   // Puedes reemplazar esto con datos reales desde Vuex, pinia o API
-        //   { name: 'Vintage Camera', price: 120, quantity: 1 },
-        //   { name: 'Tripod', price: 30, quantity: 2 }
-        // ],
         cardNumber: '',
         expiry: '',
         cvc: ''
       };
     },
     computed: {
-      totalPrice() {
-        return this.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-      },
+      ...mapState(useCartStore, ['items', 'totalPrice', 'isEmpty']),
       isAuthenticated() {
         const token = localStorage.getItem('token');
         return !!token;
@@ -83,14 +78,14 @@
     methods: {
       handlePayment() {
         alert('Payment processed!');
-        // Aquí iría la lógica real con Stripe u otro gateway
+        // Aquí puedes vaciar el carrito o redirigir
       },
       goToLogin() {
         this.$router.push('/login');
       }
     }
   };
-  </script>
+</script>
   
   <style scoped>
   .cart-container {

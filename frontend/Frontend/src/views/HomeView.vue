@@ -1,13 +1,15 @@
 <script>
 import ImageContainer from '../components/ImageContainer.vue';
 import Steps from '../components/Steps.vue';
+import Categories from '../components/Categories.vue';
 
 
 export default {
   name: 'Home',
   components: { 
     ImageContainer,
-    Steps,  
+    Steps, 
+    Categories, 
   }
 };
 </script>
@@ -16,6 +18,7 @@ export default {
   <div>    
     <ImageContainer />
     <Steps />
+    <Categories />
   </div>
 </template>
 

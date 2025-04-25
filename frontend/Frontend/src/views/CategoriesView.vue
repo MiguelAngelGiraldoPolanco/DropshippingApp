@@ -7,22 +7,16 @@ import Filtros from '../components/Filtro.vue';
 const route = useRoute();
 const { getData, datos } = useGetData();
 
-getData(`http://localhost:3005/api/v1/products`);
+const cagtegoryId = route.params.id;
+console.log(cagtegoryId);
 
-function aplicarFiltros(filtros) {
-  console.log("Filtros aplicados:", filtros);
-  // Aquí podrías filtrar los datos localmente o hacer otra petición
-}
+getData(`http://localhost:3005/api/v1/categories/${cagtegoryId}/products`);
+console.log(datos);
+
 </script>
 
 <template>
   <div class="explore-layout">
-    <!-- Filtros a la izquierda -->
-    <aside class="filtros-col">
-      <Filtros @onFiltrar="aplicarFiltros" />
-    </aside>
-
-    <!-- Productos a la derecha -->
     <section class="productos-col">
       <div class="products-container" v-if="datos">    
         <div v-for="dato in datos" :key="dato.id" class="product-card">      

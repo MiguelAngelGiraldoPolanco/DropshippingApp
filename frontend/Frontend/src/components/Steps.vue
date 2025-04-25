@@ -1,4 +1,8 @@
 <template>
+  <div class="categories-wrapper">
+        <div class="section-title">
+            <h1>Steps to use</h1>
+        </div>
     <div class="steps-container">
       <div class="step_one">
         <picture>
@@ -25,6 +29,7 @@
         <p>Complete your purchase. Get ready to embark on journey through time.</p>
       </div>
     </div>
+  </div>
 </template>
   
 <script>
@@ -34,11 +39,28 @@
 </script>
 
 <style scoped>
+.categories-wrapper {
+  width: 100%;
+}
+
 .steps-container {
   display: flex;
   gap: 1rem;
   margin-top: 4rem;
   flex-wrap: wrap;
+  margin-bottom: 10rem;
+}
+
+.section-title {
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-title h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: black;
 }
 
 .step_one, .step_two, .step_three {

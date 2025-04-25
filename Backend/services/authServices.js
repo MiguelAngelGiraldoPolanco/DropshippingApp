@@ -36,7 +36,7 @@ class AuthService {
           id: user.id,
           email: user.email,
           role: user.role,
-          name: user.customer?.name // ✅ devolvemos el nombre del modelo relacionado
+          name: user.customer?.name, // ✅ devolvemos el nombre del modelo relacionado
         },
         token
       });

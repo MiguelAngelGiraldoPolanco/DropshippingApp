@@ -34,16 +34,20 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue'), 
     },
     {
-      path: '/:pathMatch(.*)*',
-      name: 'NotFound',
-      component: () => import('../views/NotFoundView.vue'),
-    },
-    {
       path: '/cart',
       name: 'cart',
       component: () => import('../views/CartView.vue'), 
     },
-
+    {
+      path: '/categories/:id',
+      name: 'categories',
+      component: () => import('../views/CategoriesView.vue'), 
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('../views/NotFoundView.vue'),
+    },
   ],
 })
 

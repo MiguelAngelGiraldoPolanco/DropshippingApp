@@ -8,8 +8,12 @@
       <button class="menu-toggle" @click="toggleMenu">☰</button>
       <nav :class="{ open: isMenuOpen }">
         <RouterLink to="/explore" class="nav-link">Explore</RouterLink>
-        <RouterLink to="/login" class="nav-link">Sign Up</RouterLink>
-        <!-- <RouterLink to="/register" class="nav-link">Register</RouterLink> -->
+        <div v-if="!auth.isAuthenticated" class="nav-link">
+          <RouterLink to="/login" class="nav-link">Login</RouterLink>
+        </div>
+        
+          <button v-if="auth.isAuthenticated" class = "nav-link "@click = "logoutUser">LogOut</button>
+       
         <div class="logo">
           <Car />
         </div>
@@ -19,28 +23,44 @@
 </template>
   
 <script>
-import Camera from './icons/Camera.vue';
-import Car from './icons/Car.vue';
-export default {
-  name: 'Header',
-  components: {
-    Camera,
-    Car
-  },
-  data() {
-    return {
-      isMenuOpen: false
-    };
-  },
-  methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
+  import Camera from './icons/Camera.vue';
+  import Car from './icons/Car.vue';
+  import { useAuthStore } from '@/stores/auth';
+
+  export default {
+    name: 'Header',
+    components: {
+      Camera,
+      Car
+    },
+    data() {
+      return {
+        isMenuOpen: false
+      };
+    },
+    computed: {
+      auth() {
+        return useAuthStore();
+      },
+      isAuthenticated() {
+        return auth.isAuthenticated();
+      }
+    },
+    methods: {
+      toggleMenu() {
+        this.isMenuOpen = !this.isMenuOpen;
+      },
+      logoutUser() {
+        // Llama al método de logout de Pinia
+        this.auth.logout();
+        // Recarga la página para actualizar la interfaz
+        location.reload();
+      }
     }
-  }
-};
+  };
 </script>
   
-  <style scoped>
+<style scoped>
   .wrapper {
   display: flex;
   justify-content: space-between;
@@ -121,5 +141,5 @@ nav {
     margin-bottom: 0.5rem;
   }
 }
-  </style>
+</style>
   

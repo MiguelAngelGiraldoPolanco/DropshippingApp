@@ -18,6 +18,9 @@
   
   <script>
 import { usePostData } from '../composables/usePostData';
+import { useAuthStore } from '@/stores/auth';
+
+const auth = useAuthStore();
 
 export default {
   name: 'LoginForm',
@@ -39,10 +42,8 @@ export default {
         console.log('Full response:', response );
 
         const { token, user } = response.data;
-
         
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
+        auth.login(token,user);
 
         alert(`Bienvenido, ${user.name}`);
         this.$router.push('/');
