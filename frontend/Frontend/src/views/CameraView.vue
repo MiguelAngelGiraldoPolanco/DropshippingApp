@@ -2,6 +2,7 @@
 import { useRoute } from 'vue-router'; 
 import { useGetData } from '@/composables/useGetData'; 
 import { watchEffect } from 'vue';  
+import AddButton from '../components/AddButton.vue';
 
 const { getData, datos } = useGetData();
 const route = useRoute(); 
@@ -33,6 +34,7 @@ console.log(datos);
       <p class="product-stock">Stock disponible: {{ datos.stock }}</p>
       <p class="product-marca">Marca: {{ datos.marca }}</p>
       <p class="product-modelo">Modelo: {{ datos.modelo }}</p>
+      <AddButton :product="datos" />
     </div>
 
     <!-- Espacio para componente futuro (agregar al carrito) -->

@@ -11,10 +11,13 @@ export const useCartStore = defineStore('cart', {
   actions: {
     addItem(product) {
       const existing = this.items.find(item => item.name === product.name);
+      
+      const quantityToAdd = product.quantity || 1; // Si no pasa quantity, asumimos 1
+    
       if (existing) {
-        existing.quantity += product.quantity;
+        existing.quantity += quantityToAdd;
       } else {
-        this.items.push({ ...product });
+        this.items.push({ ...product, quantity: quantityToAdd });
       }
     },
     clearCart() {

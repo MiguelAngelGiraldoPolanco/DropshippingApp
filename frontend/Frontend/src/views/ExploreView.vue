@@ -2,6 +2,7 @@
 import { useRoute } from "vue-router"; 
 import { useGetData } from '../composables/useGetData';
 import Filtros from '../components/Filtro.vue';
+import AddButton from "../components/AddButton.vue";
 
 
 const route = useRoute();
@@ -31,7 +32,7 @@ function aplicarFiltros(filtros) {
           </router-link> 
           <h3>{{ dato.name }}</h3>
           <p class="price">Precio: {{ dato.price }} €</p>
-          <button class="add-button">Añadir</button>
+          <AddButton :product="dato" />
         </div>
       </div>
     </section>
@@ -98,22 +99,6 @@ h3 {
   color: #555;
   margin: 0.25rem 0;
   font-family: 'Times New Roman', serif;
-}
-
-.add-button {
-  margin-top: 0.8rem;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  background-color: #000;
-  color: white;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.add-button:hover {
-  background-color: #333;
 }
 
 a {
