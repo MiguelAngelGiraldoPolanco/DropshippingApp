@@ -53,7 +53,7 @@ console.log(datos);
 .products-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 1rem;
   justify-content: flex-start;
 }
 

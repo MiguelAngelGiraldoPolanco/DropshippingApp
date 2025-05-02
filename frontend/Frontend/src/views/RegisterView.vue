@@ -63,6 +63,7 @@ export default {
     };
   },
   methods: {
+    
     formatPhone(e) {
       this.phone = this.phone.replace(/\s+/g, '').replace(/[^0-9+]/g, '');
 
@@ -180,3 +181,5 @@ export default {
   }
   </style>
   
+
+ 

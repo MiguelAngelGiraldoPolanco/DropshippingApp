@@ -44,6 +44,11 @@ const router = createRouter({
       component: () => import('../views/CategoriesView.vue'), 
     },
     {
+      path: '/registro-google',
+      name: 'RegisterGoogle',
+      component: () => import('../views/RegisterWithGoogleView.vue'), 
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('../views/NotFoundView.vue'),

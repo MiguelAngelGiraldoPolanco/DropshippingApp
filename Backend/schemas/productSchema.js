@@ -60,6 +60,7 @@ const queryProductSchema = Joi.object({
   price_max,
   estado,
   marca,
+  categoryId,
   modelo,
 }).with('price_min', 'price_max') // Si hay price_min, debe haber price_max
   .with('price_max', 'price_min') // Y viceversa
