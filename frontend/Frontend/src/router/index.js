@@ -37,6 +37,7 @@ const router = createRouter({
       path: '/cart',
       name: 'cart',
       component: () => import('../views/CartView.vue'), 
+      props: (route) => ({ success: route.query.success }),
     },
     {
       path: '/categories/:id',

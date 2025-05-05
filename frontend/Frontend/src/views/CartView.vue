@@ -2,8 +2,11 @@
   <div class="cart-container">
     <div class="cart-items">
       <h1 class="title">Your Cart</h1>
-
-      <div v-if="isEmpty" class="empty-cart">
+      <div v-if="success" class="empty-cart">
+        <h2>Pago Realizado Con exito</h2>
+        <RouterLink to="/explore" class="register-button">Back to explore</RouterLink>
+      </div>
+      <div v-else-if="isEmpty" class="empty-cart">
         <h2>Cart is empty</h2>
         <p>Looks like you haven't added anything yet. Start shopping now!</p>
         <RouterLink to="/explore" class="register-button">Back to explore</RouterLink>
@@ -48,7 +51,7 @@
       <div v-else>
         <p><strong>Total: {{ formatPrice(totalPrice) }}</strong></p>
         <form @submit.prevent="handlePayment">
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="cardNumber">Card Number</label>
             <input type="text" id="cardNumber" v-model="cardNumber" required />
           </div>
@@ -59,8 +62,8 @@
           <div class="form-group">
             <label for="cvc">CVC</label>
             <input type="text" id="cvc" v-model="cvc" required />
-          </div>
-          <button type="submit" class="register-button">Pay Now</button>
+          </div> -->
+          <button @click="checkout">Ir al pago</button>
         </form>
       </div>
     </div>
@@ -71,13 +74,16 @@
 import { useCartStore } from '@/stores/cart';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { usePostData } from '../composables/usePostData';
 
 const cartStore = useCartStore();
 const router = useRouter();
 
-const cardNumber = ref('');
-const expiry = ref('');
-const cvc = ref('');
+const { postData } = usePostData();
+
+// const cardNumber = ref('');
+// const expiry = ref('');
+// const cvc = ref('');
 
 const items = computed(() => cartStore.items);
 const totalPrice = computed(() => cartStore.totalPrice);
@@ -86,6 +92,13 @@ const isEmpty = computed(() => cartStore.isEmpty);
 const isAuthenticated = computed(() => {
   const token = localStorage.getItem('token');
   return !!token;
+});
+
+const props = defineProps({
+  success: {
+    type: String,
+    default: null,
+  },
 });
 
 function formatPrice(price) {
@@ -105,6 +118,23 @@ function goToLogin() {
 function removeItem(index) {
   cartStore.items.splice(index, 1);
 }
+
+const checkout = async () => {
+  try {
+    const { response } = await postData('http://localhost:3005/create-checkout-session', {
+      items: items.value, // 👈 .value porque es un computed
+    });
+
+    if (response.data.url) {
+      window.location.href = response.data.url;
+    } else {
+      alert('Error al crear la sesión de pago');
+    }
+  } catch (error) {
+    alert('Error: ' + error.message);
+  }
+};
+
 </script>
 
 <style scoped>

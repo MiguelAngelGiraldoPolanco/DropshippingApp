@@ -1,8 +1,16 @@
-function securityHeaders(req, res, next) {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  next();
-}
+// db/middlewares/securityHeadersHandler.js
+const helmet = require('helmet');
+
+const securityHeaders = helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://js.stripe.com"],
+      styleSrc: ["'self'", "https://js.stripe.com", "'unsafe-inline'"],
+      frameSrc: ["https://js.stripe.com"],
+    },
+  },
+  crossOriginEmbedderPolicy: false, // Necesario a veces para Stripe
+});
 
 module.exports = securityHeaders;
