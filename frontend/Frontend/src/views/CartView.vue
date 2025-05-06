@@ -121,9 +121,23 @@ function removeItem(index) {
 
 const checkout = async () => {
   try {
-    const { response } = await postData('http://localhost:3005/create-checkout-session', {
-      items: items.value, // 👈 .value porque es un computed
-    });
+    const token = localStorage.getItem('token'); // O donde lo tengas guardado
+
+    const { response } = await postData(
+      'http://localhost:3005/api/v1/payments/create-checkout-session',
+      {
+        items: items.value,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (!token) {
+      alert('No estás autenticado');
+      return;
+}
 
     if (response.data.url) {
       window.location.href = response.data.url;
@@ -134,6 +148,7 @@ const checkout = async () => {
     alert('Error: ' + error.message);
   }
 };
+
 
 </script>
 
