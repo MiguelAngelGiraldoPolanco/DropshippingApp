@@ -1,9 +1,9 @@
 require('dotenv').config();
 
 const express = require('express');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const routerApi = require('./routes');
 const cors = require('cors');
+const webhookRouter = require('./routes/webhookRouter');
 const { logErrors , errorHandler, boomErrorHandler, ormErrorHandler } = require('./middlewares/errorHandler');
 const { checkApiKey } = require('./middlewares/authHandler');
 const logRequest = require('./middlewares/loggingHandler');
@@ -13,7 +13,7 @@ const securityHeaders = require('./middlewares/securityHeadersHanlder');
 
 const app = express();
 const port = process.env.PORT || 3005;
-
+app.use('/api/v1/payments/webhook', webhookRouter);
 app.use(express.json());
 // Uso global de los middlewares
 // app.use(logRequest);

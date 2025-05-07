@@ -8,6 +8,7 @@ const ordersRouter = require('./ordersRouter');
 const authRouter = require('./authRouter');
 const profileRouter = require('./profileRouter');
 const stripeRouter = require('./stripeRouter');
+const webhookRouter = require('./webhookRouter');
 
 function routerApi(app) {
   const router = express.Router();  // esto se hace por si mi api tiene muchas versiones para no tener que cambiar cada uno de lo srouter
@@ -22,6 +23,7 @@ function routerApi(app) {
   router.use('/auth', authRouter);
   router.use('/profile', profileRouter);
   router.use('/payments', stripeRouter);
+  router.use('/payments', webhookRouter);
 }
 
 module.exports = routerApi;

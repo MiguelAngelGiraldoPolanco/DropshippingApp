@@ -29,7 +29,12 @@ class StripeService {
         cancel_url: 'http://localhost:5173/cart?canceled=true',
         metadata: {
           userId: userId.toString(), // El userId como string
-          items: JSON.stringify(items), // Los items como JSON string
+          items: JSON.stringify(
+            items.map(item => ({
+              productId: item.id,
+              quantity: item.quantity
+            }))
+          ),
         },
       });
 
