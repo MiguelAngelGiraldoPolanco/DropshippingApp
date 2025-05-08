@@ -6,14 +6,22 @@
         <h1>VINTAGE COLLECTION</h1>
       </div>
       <button class="menu-toggle" @click="toggleMenu">☰</button>
-      <nav :class="{ open: isMenuOpen }">
+      <nav :class="{ open: isMenuOpen.value }">
         <RouterLink to="/explore" class="nav-link">Explore</RouterLink>
+
         <div v-if="!auth.isAuthenticated" class="nav-link">
           <RouterLink to="/login" class="nav-link">Login</RouterLink>
         </div>
-        
-          <button v-if="auth.isAuthenticated" class = "nav-link "@click = "logoutUser">LogOut</button>
-       
+
+        <RouterLink v-if="auth.isAuthenticated" to="/dashboard" class="nav-link">Dashboard</RouterLink>
+        <button
+          v-if="auth.isAuthenticated"
+          class="nav-link"
+          @click="logoutUser"
+        >
+          LogOut
+        </button>
+
         <div class="logo">
           <Car />
         </div>
@@ -21,47 +29,30 @@
     </div>
   </header>
 </template>
-  
-<script>
-  import Camera from './icons/Camera.vue';
-  import Car from './icons/Car.vue';
-  import { useAuthStore } from '@/stores/auth';
 
-  export default {
-    name: 'Header',
-    components: {
-      Camera,
-      Car
-    },
-    data() {
-      return {
-        isMenuOpen: false
-      };
-    },
-    computed: {
-      auth() {
-        return useAuthStore();
-      },
-      isAuthenticated() {
-        return auth.isAuthenticated();
-      }
-    },
-    methods: {
-      toggleMenu() {
-        this.isMenuOpen = !this.isMenuOpen;
-      },
-      logoutUser() {
-        // Llama al método de logout de Pinia
-        this.auth.logout();
-        // Recarga la página para actualizar la interfaz
-        location.reload();
-      }
-    }
-  };
+<script setup>
+import { ref } from 'vue';
+import { useRouter, RouterLink } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import Camera from './icons/Camera.vue';
+import Car from './icons/Car.vue';
+
+const isMenuOpen = ref(false);
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+
+const auth = useAuthStore();
+const router = useRouter();
+
+const logoutUser = () => {
+  auth.logout();
+  router.push('/');
+};
 </script>
-  
+
 <style scoped>
-  .wrapper {
+.wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -113,11 +104,10 @@ nav {
 }
 
 .logo :deep(svg) {
-  font-size: 2rem; /* Tamaño más grande */
-  color: black; /* Iconos en negro */
+  font-size: 2rem;
+  color: black;
   transition: transform 0.2s ease;
 }
-
 
 @media (max-width: 768px) {
   .menu-toggle {
@@ -142,4 +132,3 @@ nav {
   }
 }
 </style>
-  

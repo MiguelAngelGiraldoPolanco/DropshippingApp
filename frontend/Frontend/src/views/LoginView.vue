@@ -13,61 +13,44 @@
       <button type="submit" class="login-button">Log In</button>
     </form>
     <!-- Botón para registrar con Google -->
-    <button @click="handleGoogleRegister" class="google-button">Registrar con Google</button>
     <RouterLink to="/register" class="nav-link">Register</RouterLink>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { usePostData } from '../composables/usePostData';
 import { useAuthStore } from '@/stores/auth';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router'; // Asegúrate de importar useRouter
 
-export default {
-  name: 'LoginForm',
-  setup() {
-    const email = ref('');
-    const password = ref('');
-    const router = useRouter(); // Acceder a la instancia de router
-    const auth = useAuthStore();
+const email = ref('');
+const password = ref('');
+const router = useRouter();
+const auth = useAuthStore();
 
-    const handleGoogleRegister = () => {
-      router.push('/registro-google'); // Redirigir correctamente a la ruta de registro
-    };
+const handleLogin = async () => {
+  const { postData } = usePostData();
+  try {
+    const { response } = await postData('http://localhost:3005/api/v1/auth/login', {
+      email: email.value,
+      password: password.value,
+    });
 
-    const handleLogin = async () => {
-      const { postData } = usePostData();
-      try {
-        const { response } = await postData('http://localhost:3005/api/v1/auth/login', {
-          email: email.value,
-          password: password.value,
-        });
+    console.log('Full response:', response);
 
-        console.log('Full response:', response);
+    const { token, user } = response.data;
 
-        const { token, user } = response.data;
+    auth.login(token, user);
 
-        auth.login(token, user);
-
-        alert(`Bienvenido, ${user.name}`);
-        router.push('/'); // Redirigir al inicio después de un login exitoso
-      } catch (error) {
-        console.error('Login failed:', error.response?.data || error.message);
-        alert('Credenciales incorrectas o error en servidor');
-      }
-
-      console.log('Email:', email.value);
-      console.log('Password:', password.value);
-    };
-
-    return {
-      email,
-      password,
-      handleGoogleRegister,
-      handleLogin
-    };
+    alert(`Bienvenido, ${user.name}`);
+    router.push('/'); // Redirigir al inicio después de un login exitoso
+  } catch (error) {
+    console.error('Login failed:', error.response?.data || error.message);
+    alert('Credenciales incorrectas o error en servidor');
   }
+
+  console.log('Email:', email.value);
+  console.log('Password:', password.value);
 };
 </script>
 

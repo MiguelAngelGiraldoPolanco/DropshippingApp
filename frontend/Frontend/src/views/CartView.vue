@@ -50,20 +50,8 @@
       </div>
       <div v-else>
         <p><strong>Total: {{ formatPrice(totalPrice) }}</strong></p>
-        <form @submit.prevent="handlePayment">
-          <!-- <div class="form-group">
-            <label for="cardNumber">Card Number</label>
-            <input type="text" id="cardNumber" v-model="cardNumber" required />
-          </div>
-          <div class="form-group">
-            <label for="expiry">Expiry Date</label>
-            <input type="text" id="expiry" placeholder="MM/YY" v-model="expiry" required />
-          </div>
-          <div class="form-group">
-            <label for="cvc">CVC</label>
-            <input type="text" id="cvc" v-model="cvc" required />
-          </div> -->
-          <button @click="checkout">Ir al pago</button>
+        <form @submit.prevent="handlePayment">          
+          <button v-if="!isEmpty" @click="checkout" class="register-button">Ir al pago</button>
         </form>
       </div>
     </div>

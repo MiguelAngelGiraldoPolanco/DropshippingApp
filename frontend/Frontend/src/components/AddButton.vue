@@ -1,37 +1,33 @@
 <template>
-    <div class="add-button">
-      <button @click="addItemToCart">Add</button>
-    </div>
-  </template>
-  
-  <script>
-  import { useCartStore } from '@/stores/cart.js';
-  
-  export default {
-    name: 'CartButton',
-    props: {
-      product: {
-        type: Object,
-        required: true
-      }
-    },
-    setup(props) {
-      const cart = useCartStore();
-  
-      function addItemToCart() {
-        cart.addItem(props.product);
-        console.log('Item added to cart:', props.product);
-      }
-  
-      return {
-        addItemToCart
-      };
-    }
-  };
-  </script>
-  
-  <style scoped>
-  .add-button button{
+  <div class="add-button">
+    <button @click="addItemToCart">Add</button>
+  </div>
+</template>
+
+<script setup>
+import { useCartStore } from '@/stores/cart.js';
+import { defineProps } from 'vue';
+
+// Recibir la prop "product"
+const props = defineProps({
+  product: {
+    type: Object,
+    required: true
+  }
+});
+
+// Acceder al store del carrito
+const cart = useCartStore();
+
+// Función para agregar al carrito
+function addItemToCart() {
+  cart.addItem(props.product);
+  console.log('Item added to cart:', props.product);
+}
+</script>
+
+<style scoped>
+.add-button button {
   margin-top: 0.8rem;
   padding: 0.6rem 1.2rem;
   border: none;
@@ -46,5 +42,4 @@
 .add-button button:hover {
   background-color: #333;
 }
-  </style>
-  
+</style>

@@ -1,21 +1,15 @@
-<script>
-import ImageContainer from '../components/ImageContainer.vue';
-import Steps from '../components/Steps.vue';
-import Categories from '../components/Categories.vue';
+<script setup>
+import ImageContainer from '../components/ImageContainer.vue'
+import Steps from '../components/Steps.vue'
+import Categories from '../components/Categories.vue'
 
-
-export default {
-  name: 'Home',
-  components: { 
-    ImageContainer,
-    Steps, 
-    Categories, 
-  }
-};
+defineOptions({
+  name: 'Home'
+})
 </script>
 
 <template>
-  <div>    
+  <div>
     <ImageContainer />
     <Steps />
     <Categories />

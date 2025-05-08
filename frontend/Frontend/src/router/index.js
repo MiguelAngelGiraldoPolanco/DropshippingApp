@@ -45,9 +45,9 @@ const router = createRouter({
       component: () => import('../views/CategoriesView.vue'), 
     },
     {
-      path: '/registro-google',
-      name: 'RegisterGoogle',
-      component: () => import('../views/RegisterWithGoogleView.vue'), 
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/UserView.vue'),
     },
     {
       path: '/:pathMatch(.*)*',
