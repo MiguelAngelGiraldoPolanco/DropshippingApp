@@ -10,11 +10,13 @@ const logRequest = require('./middlewares/loggingHandler');
 const corsHandler = require('./middlewares/corsHanldler');
 const sessionHandler = require('./middlewares/sessionHandler');
 const securityHeaders = require('./middlewares/securityHeadersHanlder');
+const { clerkMiddleware } = require('@clerk/express');
 
 const app = express();
 const port = process.env.PORT || 3005;
 app.use('/api/v1/payments/webhook', webhookRouter);
 app.use(express.json());
+app.use(clerkMiddleware());
 // Uso global de los middlewares
 // app.use(logRequest);
 // app.use(corsHandler);

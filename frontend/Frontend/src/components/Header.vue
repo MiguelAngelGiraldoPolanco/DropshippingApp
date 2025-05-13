@@ -9,18 +9,27 @@
       <nav :class="{ open: isMenuOpen.value }">
         <RouterLink to="/explore" class="nav-link">Explore</RouterLink>
 
-        <div v-if="!auth.isAuthenticated" class="nav-link">
-          <RouterLink to="/login" class="nav-link">Login</RouterLink>
+        <div v-if="!auth.isAuthenticated" >
+          <!-- <RouterLink to="/login" class="nav-link">Login</RouterLink> -->  
+          <SignedOut>
+            <SignInButton mode="modal" :appearance="{ baseTheme: undefined }" asChild>
+              <button class="nav-link">
+                Login
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>         
         </div>
 
-        <RouterLink v-if="auth.isAuthenticated" to="/dashboard" class="nav-link">Dashboard</RouterLink>
-        <button
+        <!-- <button
           v-if="auth.isAuthenticated"
           class="nav-link"
           @click="logoutUser"
         >
           LogOut
-        </button>
+        </button> -->
 
         <div class="logo">
           <Car />
@@ -36,6 +45,7 @@ import { useRouter, RouterLink } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import Camera from './icons/Camera.vue';
 import Car from './icons/Car.vue';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/vue'
 
 const isMenuOpen = ref(false);
 const toggleMenu = () => {
