@@ -12,11 +12,11 @@ const address = Joi.string().min(3).max(100);
 const createCustomerSchema = Joi.object({
   name: name.required(),
   lastName: lastName.required(),
-  phone: phone.required(),
-  address: address.required(),
+  phone,
+  address,
   user: Joi.object({
     email: email.required(),
-    password: password.required()
+    password,
   })
 });
 

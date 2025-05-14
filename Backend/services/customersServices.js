@@ -6,21 +6,31 @@ class CustomersService{
 
   constructor(){}
 
-  async create(data){
-      const hash = await bcrypt.hash(data.user.password, 10);
-      const newData = {
-        ...data,
-        user: {
-          ...data.user,
-          password: hash,
-        }
-      };
-      const newCostomer = await models.Customer.create(newData, {
-        include: ['user']
+  async create(data) {
+    let userData = { ...data.user };
+
+    if (userData.password) {
+      const hash = await bcrypt.hash(userData.password, 10);
+      userData.password = hash;
+    }
+
+    const newData = {
+      ...data,
+      user: userData,
+    };
+
+    const newCustomer = await models.Customer.create(newData, {
+      include: ['user']
     });
-      delete newCostomer.user.dataValues.password;
-      return newCostomer;
+
+    // Elimina la contraseña de la respuesta
+    if (newCustomer.user) {
+      delete newCustomer.user.dataValues.password;
+    }
+
+    return newCustomer;
   }
+
    // ejemplo de como conectar y hacer una consulta a la base de datos que tengo en libs postgres.js
   async find(){
       const rta = await models.Customer.findAll({

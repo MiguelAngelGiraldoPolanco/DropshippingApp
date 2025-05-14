@@ -40,8 +40,8 @@ class StripeService {
 
       return session; // Devolver la URL de la sesión de pago
     } catch (err) {
-      console.error('Error creating Stripe checkout session:', err);
-      throw boom.badImplementation('Error al crear la sesión de pago');
+      console.error('Stripe error:', err.message);
+      console.error(err.stack);
     }
   }
 }

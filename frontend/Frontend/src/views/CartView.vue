@@ -44,7 +44,7 @@
 
     <div class="checkout-section">
       <h2>Payment</h2>
-      <div v-if="!isAuthenticated">
+      <div v-if="!isSignedIn">
         <p>Please log in to proceed with the payment.</p>
         <button @click="goToLogin" class="register-button">Login</button>
       </div>
@@ -63,6 +63,11 @@ import { useCartStore } from '@/stores/cart';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { usePostData } from '../composables/usePostData';
+import { useAuth, useUser} from '@clerk/vue'
+const { user , isLoaded } = useUser()
+
+
+const { getToken, isSignedIn } = useAuth()
 
 const cartStore = useCartStore();
 const router = useRouter();
@@ -109,12 +114,38 @@ function removeItem(index) {
 
 const checkout = async () => {
   try {
-    const token = localStorage.getItem('token'); // O donde lo tengas guardado
 
+    if (!isLoaded.value) {
+      alert('La información del usuario aún no está disponible. Intenta de nuevo en unos segundos.');
+      return;
+    }
+
+    // Obtener el token primero
+    const token = await getToken.value();
+
+    if (!token) {
+      alert('No estás autenticado');
+      return;
+    }
+     // O usa otro campo si es necesario, dependiendo de la estructura del token
+    const email = user.value?.primaryEmailAddress?.emailAddress ||
+                  (user.value?.emailAddresses?.[0]?.emailAddress) ||
+                  null;
+
+    console.log('Email:', email);
+
+
+    if (!email) {
+      alert('No se pudo obtener el correo electrónico');
+      return;
+    }
+
+    // Hacer la solicitud con el token
     const { response } = await postData(
       'http://localhost:3005/api/v1/payments/create-checkout-session',
       {
         items: items.value,
+        email: email,
       },
       {
         headers: {
@@ -122,20 +153,19 @@ const checkout = async () => {
         },
       }
     );
-    if (!token) {
-      alert('No estás autenticado');
-      return;
-}
 
+    // Comprobar si la respuesta tiene la URL de la sesión de pago
     if (response.data.url) {
       window.location.href = response.data.url;
     } else {
       alert('Error al crear la sesión de pago');
     }
   } catch (error) {
+    // Manejar errores
     alert('Error: ' + error.message);
   }
 };
+
 
 
 </script>
