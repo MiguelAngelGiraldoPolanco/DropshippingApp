@@ -7,7 +7,7 @@
       </div>
       <button class="menu-toggle" @click="toggleMenu">☰</button>
       <nav :class="{ open: isMenuOpen.value }">
-        <RouterLink to="/explore" class="nav-link">Explore</RouterLink>
+        <RouterLink to="/exploreCOrP" class="nav-link">Explore</RouterLink>
 
         <div v-if="!auth.isAuthenticated" >
           <!-- <RouterLink to="/login" class="nav-link">Login</RouterLink> -->  

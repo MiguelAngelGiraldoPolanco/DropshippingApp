@@ -46,12 +46,19 @@
       <h2>Payment</h2>
       <div v-if="!isSignedIn">
         <p>Please log in to proceed with the payment.</p>
-        <button @click="goToLogin" class="register-button">Login</button>
       </div>
       <div v-else>
-        <p><strong>Total: {{ formatPrice(totalPrice) }}</strong></p>
-        <form @submit.prevent="handlePayment">          
-          <button v-if="!isEmpty" @click="checkout" class="register-button">Ir al pago</button>
+        <p><strong>Data:</strong></p>
+        <form @submit.prevent="handlePayment">  
+          <label for="adress">Adress</label>
+          <input type="text" id="adress" v-model="adress" placeholder="Avenida Siempreviva 742" required>
+
+          <label for="phone">Phone</label>
+          <input type="number" id="phone" v-model="phone" placeholder="123 123 123" required>
+            
+          <p><strong>Total: {{ formatPrice(totalPrice) }}</strong></p>
+                
+          <button v-if="!isEmpty" @click="checkout" class="register-button">Checkout</button>
         </form>
       </div>
     </div>
@@ -74,18 +81,18 @@ const router = useRouter();
 
 const { postData } = usePostData();
 
-// const cardNumber = ref('');
-// const expiry = ref('');
+const puedeEnviar = computed(() => {
+  return adress.value.trim() !== '' && phone.value.trim() !== '';
+})
+
+const phone = ref('');
+const adress = ref('');
 // const cvc = ref('');
 
 const items = computed(() => cartStore.items);
 const totalPrice = computed(() => cartStore.totalPrice);
 const isEmpty = computed(() => cartStore.isEmpty);
 
-const isAuthenticated = computed(() => {
-  const token = localStorage.getItem('token');
-  return !!token;
-});
 
 const props = defineProps({
   success: {
@@ -104,16 +111,18 @@ function handlePayment() {
   router.push('/');       // Opcional: volver al home
 }
 
-function goToLogin() {
-  router.push('/login');
-}
-
 function removeItem(index) {
   cartStore.items.splice(index, 1);
 }
 
 const checkout = async () => {
   try {
+    
+  //    if (!puedeEnviar.value) {
+  //   alert('Por favor, completa todos los campos requeridos antes de continuar.');
+  //   return;
+  // }
+
 
     if (!isLoaded.value) {
       alert('La información del usuario aún no está disponible. Intenta de nuevo en unos segundos.');

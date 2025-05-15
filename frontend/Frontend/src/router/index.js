@@ -9,6 +9,11 @@ const router = createRouter({
       component: () => import('./../views/HomeView.vue'),
     },
     {
+      path: '/exploreCOrP',
+      name: 'exploreCOrP',
+      component: () => import('./../views/ExploreTwoView.vue'),
+    },
+    {
       path: '/explore',
       name: 'explore',
       component: () => import('./../views/ExploreView.vue'),
@@ -48,6 +53,11 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/UserView.vue'),
+    },
+    {
+      path: '/pay',
+      name: 'pay',
+      component: () => import('../views/PayView.vue'),
     },
     {
       path: '/:pathMatch(.*)*',
