@@ -6,6 +6,7 @@ const passport = require('passport');
 
 const router = express.Router();
 const cartService = new CartService();
+router.use(express.json());
 
 // Crear un carrito
 router.post('/',

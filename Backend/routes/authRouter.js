@@ -42,11 +42,12 @@
 
 // module.exports = router;
 
-// login con clerk momentaneo minetras la app escala 
+// login con clerk momentaneo minetras la app escala
 const express = require('express');
 const { requireAuth } = require('@clerk/express');
 
 const router = express.Router();
+router.use(express.json());
 
 router.post('/login', requireAuth(), async (req, res, next) => {
   try {

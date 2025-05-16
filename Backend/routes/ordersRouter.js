@@ -7,6 +7,7 @@ const validatorHandler = require('./../middlewares/validatorHandler');
 
 const router = express.Router();
 const service = new OrderService();
+router.use(express.json());
 
 router.get('/:id',
   validatorHandler(getOrderSchema, "params"),
@@ -15,6 +16,16 @@ router.get('/:id',
     const { id } = req.params;
     const order = await service.findOne(id);
     res.json(order);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/',
+   async (req, res, next) => {
+  try {
+    const orders =  await service.find();
+    res.json(orders);
   } catch (error) {
     next(error);
   }

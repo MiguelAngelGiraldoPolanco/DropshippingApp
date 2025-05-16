@@ -1,11 +1,9 @@
 const boom = require('@hapi/boom');
-
 const { models } = require('./../libs/sequelize');
 
 class OrderService {
 
-  constructor(){
-  }
+  constructor(){}
 
   async create(data) {
     const customer = await models.Customer.findOne({
@@ -13,7 +11,7 @@ class OrderService {
         '$user.id$': data.userId
       },
       include: ['user']
-    })
+    });
     if (!customer) {
       throw boom.badRequest('Customer not found');
     }
@@ -27,7 +25,19 @@ class OrderService {
   }
 
   async find() {
-    return [];
+    const orders = await models.Order.findAll({
+      include: [
+        {
+          association: 'customer',
+          include: ['user']
+        },
+        {
+          association: 'orderProducts',
+          include: ['product'] // Esto traerá los productos de cada línea
+        }
+      ]
+    });
+    return orders;
   }
 
   async findOne(id) {
@@ -37,9 +47,15 @@ class OrderService {
           association: 'customer',
           include: ['user']
         },
-        'items'
+        {
+          association: 'orderProducts',
+          include: ['product'] // Productos asociados a cada línea de orden
+        }
       ]
     });
+    if (!order) {
+      throw boom.notFound('Order not found');
+    }
     return order;
   }
 
@@ -52,6 +68,10 @@ class OrderService {
         {
           association: 'customer',
           include: ['user']
+        },
+        {
+          association: 'orderProducts',
+          include: ['product']
         }
       ]
     });
@@ -59,16 +79,22 @@ class OrderService {
   }
 
   async update(id, changes) {
-    return {
-      id,
-      changes,
-    };
+    const order = await models.Order.findByPk(id);
+    if (!order) {
+      throw boom.notFound('Order not found');
+    }
+    const updated = await order.update(changes);
+    return updated;
   }
 
   async delete(id) {
+    const order = await models.Order.findByPk(id);
+    if (!order) {
+      throw boom.notFound('Order not found');
+    }
+    await order.destroy();
     return { id };
   }
-
 }
 
 module.exports = OrderService;

@@ -7,6 +7,7 @@ const validatorHandler = require('../middlewares/validatorHandler');
 
 const router = express.Router();
 const service = new PaymentService();
+router.use(express.json());
 
 router.get('/payments',
   passport.authenticate('jwt', { session: false }), // Autenticación de JWT

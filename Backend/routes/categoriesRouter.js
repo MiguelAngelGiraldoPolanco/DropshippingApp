@@ -11,6 +11,7 @@ const { checkAdminRole, checkRoles } = require('./../middlewares/authHandler');
 const router = express.Router();
 const service = new CategoriesService();
 const servicesProducts = new ProductsService();
+router.use(express.json());
 
 router.get('/',
   // passport.authenticate('jwt', {session: false}),

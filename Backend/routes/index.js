@@ -22,8 +22,9 @@ function routerApi(app) {
   router.use('/orders', ordersRouter);
   router.use('/auth', authRouter);
   router.use('/profile', profileRouter);
-  router.use('/payments', stripeRouter);
   router.use('/payments', webhookRouter);
+  router.use('/payments', stripeRouter);
+
 }
 
 module.exports = routerApi;

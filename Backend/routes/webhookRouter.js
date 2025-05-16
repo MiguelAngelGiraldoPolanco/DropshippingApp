@@ -7,15 +7,20 @@ const router = express.Router();
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 const service = new WebhookService();
 
-router.post('/', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+router.post('/webhook',
+  bodyParser.raw({ type: 'application/json' }),
+  async (req, res) => {
+    console.log('🚀 Webhook POST received');
+
   const sig = req.headers['stripe-signature'];
   const payload = req.body;
 
   try {
     const event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
-    console.log('Webhook event received:', event.type);
-    console.log('buffer:', payload.toString('utf8'));
+    console.log('Evento recibido:', event.type);
+
     if (event.type === 'checkout.session.completed') {
+      console.log('Metadata del objeto:', event.data.object.metadata);
       await service.handleSuccessfulPayment(event);
     }
 

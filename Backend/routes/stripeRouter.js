@@ -14,6 +14,7 @@ const router = express.Router();
 
 const service = new StripeService();
 const userServiceInstance = new userService();
+router.use(express.json());
 
 router.post('/create-checkout-session',
   requireAuth(),

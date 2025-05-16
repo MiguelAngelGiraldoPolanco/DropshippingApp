@@ -74,12 +74,22 @@ class ProductsService {
   }
 
   async findOne(id) {
-    const product = await models.Product.findByPk(id);
-      if (!product) {
-        throw boom.notFound('Product not found');
+  const product = await models.Product.findByPk(id, {
+    include: [
+      'category',
+      {
+        association: 'orderProducts',
+        include: ['order'] // también puedes incluir el producto si quieres más profundidad
       }
-      return product;
+    ]
+  });
+
+  if (!product) {
+    throw boom.notFound('Product not found');
   }
+
+  return product;
+}
 
   async update(id, changes) {
     const product = await this.findOne(id);

@@ -5,7 +5,8 @@ const { Product, ProductSchema } = require('./product.model');
 const { Category, CategorySchema } = require('./category.model');
 const { OrderProduct, OrderProductSchema } = require('./order-product.model');
 
-function setupModels (sequelize){
+function setupModels(sequelize) {
+  // 1. Inicializar modelos
   User.init(UserSchema, User.config(sequelize));
   Customer.init(CustomerSchema, Customer.config(sequelize));
   Order.init(OrderSchema, Order.config(sequelize));
@@ -13,13 +14,14 @@ function setupModels (sequelize){
   Product.init(ProductSchema, Product.config(sequelize));
   OrderProduct.init(OrderProductSchema, OrderProduct.config(sequelize));
 
-
-  User.associate(sequelize.models);
-  Customer.associate(sequelize.models);
-  Order.associate(sequelize.models);
-  Category.associate(sequelize.models);
-  Product.associate(sequelize.models);
-  OrderProduct.associate(sequelize.models);
+  // 2. Asociar modelos
+  const models = sequelize.models;
+  User.associate(models);
+  Customer.associate(models);
+  Order.associate(models);
+  Category.associate(models);
+  Product.associate(models);
+  OrderProduct.associate(models);
 }
 
 module.exports = setupModels;

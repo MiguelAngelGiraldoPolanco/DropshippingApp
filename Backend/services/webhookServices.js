@@ -10,18 +10,22 @@ class WebhookService {
 
       const metadata = session.metadata;
 
-      if (!metadata || !metadata.customerId || !metadata.products) {
-        throw boom.badRequest('Faltan datos en metadata del PaymentIntent');
-      }
+      if (!metadata || !metadata.userId || !metadata.items) {
+        throw boom.badRequest('Faltan datos en metadata de la sesión de Checkout');
+    }
+      const userId = parseInt(metadata.userId, 10);
+      const items = JSON.parse(metadata.items);
 
-      const customerId = parseInt(metadata.customerId, 10);
-      const products = JSON.parse(metadata.products);
+      const customer = await models.Customer.findByPk(userId);
+    if (!customer) {
+      throw boom.badRequest(`El customer con id ${userId} no existe`);
+    }
 
-      const newOrder = await models.Order.create({
-        customerId,
-        products, // se guarda como JSONB
-        status: 'completed',
-      });
+    const newOrder = await models.Order.create({
+      customerId: customer,
+      products: items, // JSONB
+      status: 'completed',
+    });
 
       for (const item of products) {
         await models.OrderProduct.create({

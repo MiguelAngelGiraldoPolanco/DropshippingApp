@@ -7,6 +7,7 @@ const validatorHandler = require('./../middlewares/validatorHandler');
 
 const router = express.Router();
 const service = new UsersService();
+router.use(express.json());
 
 router.get('/', async (req, res, next) => {
   try {

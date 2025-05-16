@@ -9,6 +9,7 @@ const UserService = require('../services/usersServices');
 const router = express.Router();
 const service = new CustomersService();
 const userService = new UserService();
+router.use(express.json());
 
 router.get('/', async (req, res, next) => {
   try {
