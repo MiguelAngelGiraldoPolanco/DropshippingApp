@@ -7,6 +7,7 @@ const validatorHandler = require('./../middlewares/validatorHandler');
 
 const router = express.Router();
 const service = new ProductsService();
+router.use(express.json());
 
 router.get('/',
   validatorHandler(queryProductSchema, 'query'), // validador que creamos para asegurarnos que el producto que se pide ver tenga los requerimientos solicitados

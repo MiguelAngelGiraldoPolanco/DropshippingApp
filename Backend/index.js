@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const routerApi = require('./routes');
 const cors = require('cors');
@@ -7,16 +9,20 @@ const logRequest = require('./middlewares/loggingHandler');
 const corsHandler = require('./middlewares/corsHanldler');
 const sessionHandler = require('./middlewares/sessionHandler');
 const securityHeaders = require('./middlewares/securityHeadersHanlder');
+const { clerkMiddleware } = require('@clerk/express');
+const webhookRouter = require('./routes/webhookRouter');
+const stripeRouter = require('./routes/stripeRouter');
 
 const app = express();
 const port = process.env.PORT || 3005;
 
-app.use(express.json());
+// app.use(express.json());
+app.use(clerkMiddleware());
 // Uso global de los middlewares
 // app.use(logRequest);
 // app.use(corsHandler);
 // app.use(sessionHandler);
-// app.use(securityHeaders);
+app.use(securityHeaders);
 
 const whitelist = ['http://localhost:8080', 'https://myapp.com']; // esta es la lista de los dominios que tienen acceso a mi api
 

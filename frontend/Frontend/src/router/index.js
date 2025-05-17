@@ -9,6 +9,11 @@ const router = createRouter({
       component: () => import('./../views/HomeView.vue'),
     },
     {
+      path: '/exploreCOrP',
+      name: 'exploreCOrP',
+      component: () => import('./../views/ExploreTwoView.vue'),
+    },
+    {
       path: '/explore',
       name: 'explore',
       component: () => import('./../views/ExploreView.vue'),
@@ -26,7 +31,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/LoginView.vue'), 
+      component: () => import('../views/LoginClerkView.vue'), 
     },
     {
       path: '/register',
@@ -34,11 +39,31 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue'), 
     },
     {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('../views/CartView.vue'), 
+      props: (route) => ({ success: route.query.success }),
+    },
+    {
+      path: '/categories/:id',
+      name: 'categories',
+      component: () => import('../views/CategoriesView.vue'), 
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/UserView.vue'),
+    },
+    {
+      path: '/pay',
+      name: 'pay',
+      component: () => import('../views/PayView.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('../views/NotFoundView.vue'),
     },
-
   ],
 })
 

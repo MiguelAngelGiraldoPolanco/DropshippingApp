@@ -32,7 +32,12 @@ class AuthService {
         expiresIn: '15m'
       });
       return({
-        user,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          name: user.customer?.name, // ✅ devolvemos el nombre del modelo relacionado
+        },
         token
       });
   }

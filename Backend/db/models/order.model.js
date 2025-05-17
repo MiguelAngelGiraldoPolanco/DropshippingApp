@@ -21,39 +21,22 @@ const OrderSchema = {
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL'
   },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'pending', // Estado del pedido
+  },
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
     field: 'created_at',
     defaultValue: Sequelize.NOW,
   },
-  products: {
-    type: DataTypes.JSONB,
-    allowNull: false,
-  },
-  total: {
-    type: DataTypes.VIRTUAL,
-    get() {
-      const products = this.products || [];
-      return products.reduce((total, product) => {
-        return total + (product.price * (product.quantity || 1));
-      }, 0);
-    }
-  },status: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: 'pending', // El estado del pedido (pending, shipped, completed, etc.)
-  },createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.NOW,
-    field: 'created_at'
-  },
   updatedAt: {
-    type: DataTypes.DATE,
     allowNull: false,
+    type: DataTypes.DATE,
+    field: 'updated_at',
     defaultValue: Sequelize.NOW,
-    field: 'updated_at'
   },
 };
 
@@ -63,6 +46,11 @@ class Order extends Model {
       as: 'customer',
       foreignKey: 'customerId'
     });
+
+    this.hasMany(models.OrderProduct, {
+      as: 'orderProducts',
+      foreignKey: 'orderId'
+    });
   }
 
   static config(sequelize) {
@@ -70,7 +58,7 @@ class Order extends Model {
       sequelize,
       tableName: ORDER_TABLE,
       modelName: 'Order',
-      timestamps: false
+      timestamps: false // o true si quieres que Sequelize gestione createdAt y updatedAt
     };
   }
 }

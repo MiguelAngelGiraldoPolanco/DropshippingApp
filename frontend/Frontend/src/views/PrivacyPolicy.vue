@@ -94,10 +94,8 @@
     </p> 
   </div>
 </template>
-<script>
-export default {
-  name: 'PrivacyPolicy',
-};
+<script setup>
+
 </script>
 <style scoped>
 .privacy {

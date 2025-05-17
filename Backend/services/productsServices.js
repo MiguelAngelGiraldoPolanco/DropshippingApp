@@ -26,48 +26,70 @@ class ProductsService {
     return newProduct;
   }
 
-  async find() {
+  async find(query) {
     try {
-      // Obtiene todos los productos de la base de datos
-      const products = await models.Product.findAll();
+      const options = {
+        include: ['category'],
+        where: {},
+      };
+
+      const { limit, offset, price, price_min, price_max, categoryId } = query;
+
+      if (limit && offset) {
+        options.limit = parseInt(limit);
+        options.offset = parseInt(offset);
+      }
+
+      if (price) {
+        options.where.price = price;
+      }
+
+      if (categoryId) {
+        options.where.categoryId = categoryId;
+      }
+
+      if (price_min && price_max) {
+        options.where.price = {
+          [Op.gte]: price_min,
+          [Op.lte]: price_max,
+        };
+      }
+
+      const products = await models.Product.findAll(options);
       return products;
     } catch (error) {
       throw new Error(`Error fetching products: ${error.message}`);
     }
-    // const options = {
-    //   include: ['category'],
-    //   where: {},
-    // }
-    // const { limit, offset } = query;
-    // if (limit && offset) {
-    //   options.limit =  limit;
-    //   options.offset =  offset;
-    // }
-    // const { price } = query;
-    // if (price) {
-    //   options.where.price = price;
-    // }
+  }
 
-    // const { price_min, price_max } = query;
-    // if (price_min && price_max) {
-    //   options.where.price = {
-    //     [Op.gte]: price_min,
-    //     [Op.lte]: price_max,
-    //   };
-    // }
 
-      // Realiza la consulta para obtener todos los productos, o los productos limitados si se usan 'limit' y 'offset'.
-      // const products = await models.Product.findAll();
-      // return products;
+  async findByCategory(categoryId) {
+    const products = await models.Product.findAll({
+      where: {
+        categoryId,
+      },
+      include: ['category'],
+    });
+    return products;
   }
 
   async findOne(id) {
-    const product = await models.Product.findByPk(id);
-      if (!product) {
-        throw boom.notFound('Product not found');
+  const product = await models.Product.findByPk(id, {
+    include: [
+      'category',
+      {
+        association: 'orderProducts',
+        include: ['order'] // también puedes incluir el producto si quieres más profundidad
       }
-      return product;
+    ]
+  });
+
+  if (!product) {
+    throw boom.notFound('Product not found');
   }
+
+  return product;
+}
 
   async update(id, changes) {
     const product = await this.findOne(id);

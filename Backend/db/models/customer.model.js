@@ -21,12 +21,12 @@ const CustomerSchema = {
     field: 'last_name',
   },
   phone: {
-    allowNull: false,
+    allowNull: true,
     type: DataTypes.STRING,
   },
   address: {
     type: DataTypes.STRING,
-    allowNull: true, // Puedes agregar más detalles si es necesario
+    allowNull: true,
   },
   createdAt: {
     type: DataTypes.DATE,

@@ -6,10 +6,31 @@
         <h1>VINTAGE COLLECTION</h1>
       </div>
       <button class="menu-toggle" @click="toggleMenu">☰</button>
-      <nav :class="{ open: isMenuOpen }">
-        <RouterLink to="/explore" class="nav-link">Explore</RouterLink>
-        <RouterLink to="/login" class="nav-link">Sign Up</RouterLink>
-        <RouterLink to="/register" class="nav-link">Register</RouterLink>
+      <nav :class="{ open: isMenuOpen.value }">
+        <RouterLink to="/exploreCOrP" class="nav-link">Explore</RouterLink>
+
+        <div v-if="!auth.isAuthenticated" >
+          <!-- <RouterLink to="/login" class="nav-link">Login</RouterLink> -->  
+          <SignedOut>
+            <SignInButton mode="modal" :appearance="{ baseTheme: undefined }" asChild>
+              <button class="nav-link">
+                Login
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>         
+        </div>
+
+        <!-- <button
+          v-if="auth.isAuthenticated"
+          class="nav-link"
+          @click="logoutUser"
+        >
+          LogOut
+        </button> -->
+
         <div class="logo">
           <Car />
         </div>
@@ -17,31 +38,31 @@
     </div>
   </header>
 </template>
-  
-<script>
+
+<script setup>
+import { ref } from 'vue';
+import { useRouter, RouterLink } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 import Camera from './icons/Camera.vue';
 import Car from './icons/Car.vue';
-export default {
-  name: 'Header',
-  components: {
-    Camera,
-    Car
-  },
-  data() {
-    return {
-      isMenuOpen: false
-    };
-  },
-  methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    }
-  }
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/vue'
+
+const isMenuOpen = ref(false);
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+
+const auth = useAuthStore();
+const router = useRouter();
+
+const logoutUser = () => {
+  auth.logout();
+  router.push('/');
 };
 </script>
-  
-  <style scoped>
-  .wrapper {
+
+<style scoped>
+.wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -93,11 +114,10 @@ nav {
 }
 
 .logo :deep(svg) {
-  font-size: 2rem; /* Tamaño más grande */
-  color: black; /* Iconos en negro */
+  font-size: 2rem;
+  color: black;
   transition: transform 0.2s ease;
 }
-
 
 @media (max-width: 768px) {
   .menu-toggle {
@@ -121,5 +141,4 @@ nav {
     margin-bottom: 0.5rem;
   }
 }
-  </style>
-  
+</style>

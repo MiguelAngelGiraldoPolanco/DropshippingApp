@@ -1,24 +1,65 @@
 <script setup>
-import { useRoute } from "vue-router"; 
-import { useGetData } from '../composables/useGetData';
-import Filtros from '../components/Filtro.vue';
+import { ref, watchEffect } from 'vue';
+import { useRoute, useRouter } from "vue-router"; 
+import { useGetData } from '@/composables/useGetData';
+import AddButton from "../components/AddButton.vue";
 
+const router = useRouter();
 const route = useRoute();
+
+const priceMin = ref(Number(route.query.price_min) || 25);
+const priceMax = ref(Number(route.query.price_max) || 3200);
+
 const { getData, datos } = useGetData();
 
-getData(`http://localhost:3005/api/v1/products`);
+// Reactivamente escucha cambios y actualiza productos + URL
+watchEffect(() => {
+  // Actualiza la URL sin recargar
+  router.replace({ 
+    query: { 
+      ...route.query,
+      price_min: priceMin.value,
+      price_max: priceMax.value
+    }
+  });
 
-function aplicarFiltros(filtros) {
-  console.log("Filtros aplicados:", filtros);
-  // Aquí podrías filtrar los datos localmente o hacer otra petición
-}
+  // Obtiene datos filtrados
+  getData(`http://localhost:3005/api/v1/products?price_min=${priceMin.value}&price_max=${priceMax.value}`);
+});
 </script>
 
 <template>
   <div class="explore-layout">
     <!-- Filtros a la izquierda -->
-    <aside class="filtros-col">
-      <Filtros @onFiltrar="aplicarFiltros" />
+    <aside class="filtros">
+      <div class="campo">
+        <label>Precio Minimo: {{ priceMin }} €</label>
+        <input 
+          v-model="priceMin" 
+          type="range" 
+          min="25" 
+          max="3200" 
+          step="30"
+        />
+        <div class="range-values">
+          <span>25 €</span>
+          <span>3200 €</span>
+        </div>
+      </div>
+      <div class="campo">
+        <label>Precio Maximo: {{ priceMax }} €</label>
+        <input 
+          v-model="priceMax" 
+          type="range" 
+          min="25" 
+          max="3200" 
+          step="30"
+        />
+        <div class="range-values">
+          <span>25 €</span>
+          <span>3200 €</span>
+        </div>
+      </div>
     </aside>
 
     <!-- Productos a la derecha -->
@@ -30,7 +71,7 @@ function aplicarFiltros(filtros) {
           </router-link> 
           <h3>{{ dato.name }}</h3>
           <p class="price">Precio: {{ dato.price }} €</p>
-          <button class="add-button">Añadir</button>
+          <AddButton :product="dato" />
         </div>
       </div>
     </section>
@@ -46,9 +87,81 @@ function aplicarFiltros(filtros) {
   align-items: flex-start;
 }
 
-.filtros-col {
-  flex: 1;
+.filtros {
+  background-color: #fdfdfd;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 50%;
   max-width: 200px;
+  margin: 0 auto 2rem auto;
+  font-family: 'Times New Roman', serif;
+}
+
+.campo {
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.6rem;
+  color: #333;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #ccc;
+  border-radius: 3px;
+  outline: none;
+  margin-top: 0.3rem;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: black;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: black;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.range-values {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0.3rem;
+}
+
+.filtrar-btn {
+  margin-top: 0.8rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  background-color: #000;
+  color: white;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.filtrar-btn:hover {
+  background-color: #333;
 }
 
 .productos-col {
@@ -97,22 +210,6 @@ h3 {
   color: #555;
   margin: 0.25rem 0;
   font-family: 'Times New Roman', serif;
-}
-
-.add-button {
-  margin-top: 0.8rem;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  background-color: #000;
-  color: white;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.add-button:hover {
-  background-color: #333;
 }
 
 a {

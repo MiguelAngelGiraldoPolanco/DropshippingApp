@@ -2,12 +2,21 @@
 import { ref } from 'vue';
 import { useGetData } from '../composables/useGetData';
 
-const { getData, datos: categoriasData } = useGetData();
-getData(`http://localhost:3005/api/v1/categories`);
-
 const categoriaSeleccionada = ref('');
 const precioMax = ref(3500);
-const anioFabricacion = ref(2007);
+const precioMin = ref(25);
+
+// Para llenar las categorías (esto sí se hace al montar)
+const { getData, datos: categoriasData } = useGetData();
+getData('http://localhost:3005/api/v1/categories'); // Aquí asumo que usas esta URL
+
+const onFiltrar = async () => {
+  const { getData: getFilteredProducts } = useGetData();
+  const res = await getFilteredProducts(
+    `http://localhost:3005/api/v1/products?categoryId=${categoriaSeleccionada.value}&price_min=${precioMin.value}&price_max=${precioMax.value}`
+  );
+  console.log(res); // O puedes emitirlo para el componente padre si quieres
+};
 
 defineEmits(['onFiltrar']);
 </script>
@@ -24,7 +33,7 @@ defineEmits(['onFiltrar']);
           <input 
             type="radio" 
             name="categoria" 
-            :value="categoria.name" 
+            :value="categoria.id" 
             v-model="categoriaSeleccionada"
           />
           {{ categoria.name }}
@@ -48,30 +57,15 @@ defineEmits(['onFiltrar']);
       </div>
     </div>
 
-    <!-- Año con slider -->
-    <div class="campo">
-      <label>Año de fabricación: {{ anioFabricacion }}</label>
-      <input 
-        v-model="anioFabricacion" 
-        type="range" 
-        min="1940" 
-        max="2007" 
-        step="1"
-      />
-      <div class="range-values">
-        <span>1940</span>
-        <span>2007</span>
-      </div>
-    </div>
-
     <button 
       class="filtrar-btn" 
-      @click="$emit('onFiltrar', { categoria: categoriaSeleccionada, precioMax, anioFabricacion })"
+      @click="onFiltrar"
     >
       Filtrar
     </button>
   </div>
 </template>
+
 
 <style scoped>
 .filtros {

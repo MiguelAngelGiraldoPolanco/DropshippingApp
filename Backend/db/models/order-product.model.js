@@ -18,9 +18,22 @@ const OrderProductSchema =  {
     field: 'created_at',
     defaultValue: Sequelize.NOW,
   },
-  amount: {
+  updatedAt: {
     allowNull: false,
-    type: DataTypes.INTEGER
+    type: DataTypes.DATE,
+    field: 'updated_at',
+    defaultValue: Sequelize.NOW,
+  },
+  quantity: {
+    allowNull: false,
+    type: DataTypes.INTEGER,
+    defaultValue: 1,
+    field: 'quantity_product',
+  },
+  priceUnit: {
+    field: 'price_unit',
+    allowNull: false,
+    type: DataTypes.INTEGER, // Precio en centavos para evitar decimales
   },
   orderId: {
     field: 'order_id',
@@ -31,7 +44,7 @@ const OrderProductSchema =  {
       key: 'id'
     },
     onUpdate: 'CASCADE',
-    onDelete: 'SET NULL'
+    onDelete: 'CASCADE' // Mejor borrar productos si borras la orden
   },
   productId: {
     field: 'product_id',
@@ -49,7 +62,8 @@ const OrderProductSchema =  {
 class OrderProduct extends Model {
 
   static associate(models) {
-    //
+    this.belongsTo(models.Order, { as: 'order', foreignKey: 'orderId' });
+    this.belongsTo(models.Product, { as: 'product', foreignKey: 'productId' });
   }
 
   static config(sequelize) {
