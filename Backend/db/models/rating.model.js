@@ -1,76 +1,81 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
 
 const { CUSTOMER_TABLE } = require('./customer.model');
+const { PHOTOGRAPHER_TABLE } = require('./photographer.model');
 
-const PHOTOGRAPHER_TABLE = 'photographers';
+const RATING_TABLE = 'ratings';
 
-const PhotographerSchema = {
+const RatingSchema = {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
   },
-  portfolioUrl: {
-    type: DataTypes.STRING,
-    allowNull: true,
-    unique: true,
-  },
-  imageUrl: {
-    type: DataTypes.STRING,
+  score: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-  },
-  bio: {
-    allowNull: true,
-    type: DataTypes.STRING,
-  },
-  status: {
-    type: DataTypes.STRING,
-    defaultValue: 'pending',
-    allowNull: false,
+    validate: {
+      min: 1,
+      max: 5,
+    },
   },
   customerId: {
     field: 'customer_id',
-    allowNull: false,
     type: DataTypes.INTEGER,
-    unique: true,
+    allowNull: false,
     references: {
       model: CUSTOMER_TABLE,
-      key: 'id'
+      key: 'id',
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  },
+  photographId: {
+    field: 'photographer_id',
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: PHOTOGRAPHER_TABLE,
+      key: 'id',
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   },
   createdAt: {
-    type: DataTypes.DATE,
     allowNull: false,
+    type: DataTypes.DATE,
     defaultValue: Sequelize.NOW,
     field: 'created_at',
   },
   updatedAt: {
-    type: DataTypes.DATE,
     allowNull: false,
+    type: DataTypes.DATE,
     defaultValue: Sequelize.NOW,
     field: 'updated_at',
   },
 };
 
-class Photographer extends Model {
+class Rating extends Model {
   static associate(models) {
     this.belongsTo(models.Customer, {
       as: 'customer',
       foreignKey: 'customerId',
+    });
+    this.belongsTo(models.Photographer, {
+      as: 'photographer',
+      foreignKey: 'photographerId',
     });
   }
 
   static config(sequelize) {
     return {
       sequelize,
-      tableName: PHOTOGRAPHER_TABLE,
-      modelName: 'Photographer',
+      tableName: RATING_TABLE,
+      modelName: 'Rating',
       timestamps: false,
     };
   }
 }
 
-module.exports = { PHOTOGRAPHER_TABLE, PhotographerSchema, Photographer };
+module.exports = { RATING_TABLE, RatingSchema, Rating };

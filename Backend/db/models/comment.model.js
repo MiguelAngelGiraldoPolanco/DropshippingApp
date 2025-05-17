@@ -1,62 +1,63 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
 
+const { PHOTOGRAPHER_TABLE } = require('./photographer.model');
 const { CUSTOMER_TABLE } = require('./customer.model');
 
-const PHOTOGRAPHER_TABLE = 'photographers';
+const COMMENT_TABLE = 'comments';
 
-const PhotographerSchema = {
+const CommentSchema = {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
   },
-  portfolioUrl: {
-    type: DataTypes.STRING,
-    allowNull: true,
-    unique: true,
-  },
-  imageUrl: {
-    type: DataTypes.STRING,
+  photographerId: {
+    field: 'photographer_id',
+    type: DataTypes.INTEGER,
     allowNull: false,
-  },
-  bio: {
-    allowNull: true,
-    type: DataTypes.STRING,
-  },
-  status: {
-    type: DataTypes.STRING,
-    defaultValue: 'pending',
-    allowNull: false,
+    references: {
+      model: PHOTOGRAPHER_TABLE,
+      key: 'id',
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE', // o SET NULL si permites nulls
   },
   customerId: {
     field: 'customer_id',
-    allowNull: false,
     type: DataTypes.INTEGER,
-    unique: true,
+    allowNull: false,
     references: {
       model: CUSTOMER_TABLE,
-      key: 'id'
+      key: 'id',
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   },
-  createdAt: {
-    type: DataTypes.DATE,
+  content: {
+    type: DataTypes.STRING,
     allowNull: false,
+  },
+  createdAt: {
+    allowNull: false,
+    type: DataTypes.DATE,
     defaultValue: Sequelize.NOW,
     field: 'created_at',
   },
   updatedAt: {
-    type: DataTypes.DATE,
     allowNull: false,
+    type: DataTypes.DATE,
     defaultValue: Sequelize.NOW,
     field: 'updated_at',
   },
 };
 
-class Photographer extends Model {
+class Comment extends Model {
   static associate(models) {
+    this.belongsTo(models.Photographer, {
+      as: 'photographer',
+      foreignKey: 'photographerId',
+    });
     this.belongsTo(models.Customer, {
       as: 'customer',
       foreignKey: 'customerId',
@@ -66,11 +67,11 @@ class Photographer extends Model {
   static config(sequelize) {
     return {
       sequelize,
-      tableName: PHOTOGRAPHER_TABLE,
-      modelName: 'Photographer',
+      tableName: COMMENT_TABLE,
+      modelName: 'Comment',
       timestamps: false,
     };
   }
 }
 
-module.exports = { PHOTOGRAPHER_TABLE, PhotographerSchema, Photographer };
+module.exports = { COMMENT_TABLE, CommentSchema, Comment };

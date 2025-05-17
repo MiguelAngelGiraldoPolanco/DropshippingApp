@@ -1,45 +1,38 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
 
-const { CUSTOMER_TABLE } = require('./customer.model');
+const { PHOTOGRAPHER_TABLE } = require('./photographer.model');
 
-const PHOTOGRAPHER_TABLE = 'photographers';
+const PHOTOGRAPH_TABLE = 'photographs';
 
-const PhotographerSchema = {
+const PhotographSchema = {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
   },
-  portfolioUrl: {
+  title: {
     type: DataTypes.STRING,
-    allowNull: true,
-    unique: true,
+    allowNull: false,
+  },
+  description: {
+    allowNull: false,
+    type: DataTypes.STRING,
   },
   imageUrl: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  bio: {
-    allowNull: true,
-    type: DataTypes.STRING,
-  },
-  status: {
-    type: DataTypes.STRING,
-    defaultValue: 'pending',
-    allowNull: false,
-  },
-  customerId: {
-    field: 'customer_id',
+  photographerId: {
+    field: 'photographer_id',
     allowNull: false,
     type: DataTypes.INTEGER,
-    unique: true,
     references: {
-      model: CUSTOMER_TABLE,
+      model: PHOTOGRAPHER_TABLE,
       key: 'id'
     },
     onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -55,22 +48,22 @@ const PhotographerSchema = {
   },
 };
 
-class Photographer extends Model {
+class Photograph extends Model {
   static associate(models) {
-    this.belongsTo(models.Customer, {
-      as: 'customer',
-      foreignKey: 'customerId',
+    this.belongsTo(models.Photographer, {
+      as: 'photographer',
+      foreignKey: 'photographerId',
     });
   }
 
   static config(sequelize) {
     return {
       sequelize,
-      tableName: PHOTOGRAPHER_TABLE,
-      modelName: 'Photographer',
+      tableName: PHOTOGRAPH_TABLE,
+      modelName: 'Photograph',
       timestamps: false,
     };
   }
 }
 
-module.exports = { PHOTOGRAPHER_TABLE, PhotographerSchema, Photographer };
+module.exports = { PHOTOGRAPH_TABLE, PhotographSchema, Photograph };
