@@ -9,10 +9,11 @@ const { checkAdminRole, checkRoles } = require('../middlewares/authHandler');
 const { requireAuth } = require('@clerk/express');
 
 const service = new PhotographService();
+router.use(express.json());
 
 router.get('/', async (req, res, next) => {
   try {
-    const photographs = await service.find();
+    const photographs = await service.findAll();
     res.json(photographs);
   } catch (error) {
     next(error);
@@ -33,7 +34,7 @@ router.get('/:id',
 );
 
 router.post('/',
-  requireAuth(),
+  // requireAuth(),
   validatorHandler(createPhotographSchema, 'body'),
   async (req, res, next) => {
     try {

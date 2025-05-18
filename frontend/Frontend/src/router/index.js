@@ -60,6 +60,11 @@ const router = createRouter({
       component: () => import('../views/PayView.vue'),
     },
     {
+      path: '/photographers',
+      name: 'photographers',
+      component: () => import('../views/PhotographersView.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('../views/NotFoundView.vue'),

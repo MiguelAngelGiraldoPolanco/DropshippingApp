@@ -6,7 +6,7 @@ const { Category, CategorySchema } = require('./category.model');
 const { OrderProduct, OrderProductSchema } = require('./order-product.model');
 const { Photographer, PhotographerSchema } = require('./photographer.model');
 const { Photograph, PhotographSchema } = require('./photograph.model');
-const { Comment, CommetSchema } = require('./comment.model'); // Recuerda: nombre correcto sería "Comment"
+const { Comment, CommentSchema } = require('./comment.model'); // Recuerda: nombre correcto sería "Comment"
 const { Rating, RatingSchema } = require('./rating.model');
 
 function setupModels(sequelize) {
@@ -19,7 +19,7 @@ function setupModels(sequelize) {
   OrderProduct.init(OrderProductSchema, OrderProduct.config(sequelize));
   Photographer.init(PhotographerSchema, Photographer.config(sequelize));
   Photograph.init(PhotographSchema, Photograph.config(sequelize));
-  Comment.init(CommetSchema, Commet.config(sequelize));
+  Comment.init(CommentSchema, Comment.config(sequelize));
   Rating.init(RatingSchema, Rating.config(sequelize));
 
   // 2. Asociar modelos

@@ -9,6 +9,7 @@ const { checkAdminRole, checkRoles } = require('../middlewares/authHandler');
 const { requireAuth } = require('@clerk/express');
 
 const service = new CommentService();
+router.use(express.json());
 
 router.get('/', async (req, res, next) => {
   try {
