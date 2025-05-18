@@ -33,6 +33,16 @@ router.get('/:id',
   }
 );
 
+router.get('/photographer/:id/photos', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const photos = await service.findByPhotographerId(id);
+    res.json(photos);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/',
   // requireAuth(),
   validatorHandler(createPhotographSchema, 'body'),

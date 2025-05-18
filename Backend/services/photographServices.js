@@ -19,6 +19,14 @@ class PhotographService {
     return photo;
   }
 
+  async findByPhotographerId(photographerId) {
+  const photographs = await models.Photograph.findAll({
+    where: { photographerId },
+  });
+
+  return photographs;
+}
+
   async update(id, changes) {
     const photo = await this.findOne(id);
     return await photo.update(changes);
