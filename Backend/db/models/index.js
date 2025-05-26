@@ -36,4 +36,16 @@ function setupModels(sequelize) {
   Rating.associate(models);
 }
 
-module.exports = setupModels;
+module.exports = {
+  setupModels,
+  User,
+  Product,
+  Customer,
+  Order,
+  Category,
+  OrderProduct,
+  Photographer,
+  Photograph,
+  Comment,
+  Rating,
+};
