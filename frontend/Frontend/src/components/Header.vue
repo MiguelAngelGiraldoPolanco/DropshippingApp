@@ -6,7 +6,18 @@
         <h1>VINTAGE COLLECTION</h1>
       </div>
       <button class="menu-toggle" @click="toggleMenu">☰</button>
-      <nav :class="{ open: isMenuOpen.value }">
+      <nav :class="{ open: isMenuOpen }">
+
+        <a
+          v-if="isAdmin"
+          href="http://localhost:3000/admin"
+          class="nav-link"
+          target="_blank"
+          rel="noopener"
+        >
+          Admin Panel
+        </a>
+
         <RouterLink to="/exploreCOrP" class="nav-link">Explore</RouterLink>
 
         <div v-if="!auth.isAuthenticated" >
@@ -23,6 +34,7 @@
           </SignedIn>         
         </div>
 
+        
         <!-- <button
           v-if="auth.isAuthenticated"
           class="nav-link"
@@ -40,12 +52,36 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import Camera from './icons/Camera.vue';
 import Car from './icons/Car.vue';
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/vue'
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from '@clerk/vue';
+import { onMounted, watchEffect } from 'vue';
+import { useGetData } from '../composables/useGetData';
+
+const { getData, datos } = useGetData();
+// Primero declaramos user
+const { user } = useUser();
+const backendUser = ref(null);
+// Ahora sí podemos observar cambios en user
+watchEffect(async () => {
+  if (user.value?.emailAddresses?.[0]?.emailAddress) {
+    const email = encodeURIComponent(user.value.emailAddresses[0].emailAddress);
+    try {
+      await getData(`http://localhost:3005/api/v1/users/email/${email}`);
+      console.log('Respuesta del backend:', datos);
+      backendUser.value = datos.value;
+    } catch (err) {
+      console.error('Error al obtener usuario del backend:', err);
+    }
+  }
+});
+
+const isAdmin = computed(() => {
+  return backendUser.value?.role === 'admin';
+});
 
 const isMenuOpen = ref(false);
 const toggleMenu = () => {
@@ -59,6 +95,9 @@ const logoutUser = () => {
   auth.logout();
   router.push('/');
 };
+
+
+console.log('user:', user.value);
 </script>
 
 <style scoped>

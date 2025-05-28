@@ -4,12 +4,14 @@ const passport = require('passport');
 const OrderService = require('./../services/ordersServices');
 const { getOrderSchema ,createOrderSchema, addItemSchema,  } = require('./../schemas/orderSchema');
 const validatorHandler = require('./../middlewares/validatorHandler');
+const { requireAuth } = require('@clerk/express');
 
 const router = express.Router();
 const service = new OrderService();
 router.use(express.json());
 
 router.get('/:id',
+  requireAuth(),
   validatorHandler(getOrderSchema, "params"),
   async (req, res, next) => {
   try {
@@ -32,7 +34,7 @@ router.get('/',
 });
 
 router.post('/',
-  passport.authenticate('jwt', { session: false }),
+  requireAuth(),
   async (req, res, next) => {
     try {
       const body = {

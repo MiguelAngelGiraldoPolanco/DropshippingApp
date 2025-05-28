@@ -1,6 +1,6 @@
 const { Model, DataTypes, Sequelize } = require('sequelize');
 
-const { USER_TABLE } = require('./user.model');
+const { CUSTOMER_TABLE } = require('./customer.model');
 
 const PHOTOGRAPHER_TABLE = 'photographers';
 
@@ -16,6 +16,10 @@ const PhotographerSchema = {
     allowNull: true,
     unique: true,
   },
+  imageUrl: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   bio: {
     allowNull: true,
     type: DataTypes.STRING,
@@ -25,17 +29,17 @@ const PhotographerSchema = {
     defaultValue: 'pending',
     allowNull: false,
   },
- userId: {
-    field: 'user_id',
+  customerId: {
+    field: 'customer_id',
     allowNull: false,
     type: DataTypes.INTEGER,
     unique: true,
     references: {
-      model: USER_TABLE,
+      model: CUSTOMER_TABLE,
       key: 'id'
     },
     onUpdate: 'CASCADE',
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -53,9 +57,9 @@ const PhotographerSchema = {
 
 class Photographer extends Model {
   static associate(models) {
-    this.belongsTo(models.User, {
-      as: 'user',
-      foreignKey: 'userId',
+    this.belongsTo(models.Customer, {
+      as: 'customer',
+      foreignKey: 'customerId',
     });
   }
 

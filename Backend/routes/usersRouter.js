@@ -4,6 +4,7 @@ const passport = require('passport');
 const UsersService = require('./../services/usersServices');
 const { createUserSchema ,updateUserSchema, getUserSchema } = require('./../schemas/userSchema');
 const validatorHandler = require('./../middlewares/validatorHandler');
+const { requireAuth } = require('@clerk/express');
 
 const router = express.Router();
 const service = new UsersService();
@@ -24,6 +25,18 @@ router.get('/:id',
   try {
     const { id } = req.params;
     const user = await service.findOne(id);
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/email/:email',
+
+  async (req, res, next) => {
+  try {
+    const { email } = req.params;
+    const user = await service.findByEmail(email);
     res.json(user);
   } catch (error) {
     next(error);
@@ -57,7 +70,8 @@ router.patch('/:id',
 });
 
 router.delete('/:id',
-  passport.authenticate('jwt', { session: false }),
+  requireAuth(),
+  // passport.authenticate('jwt', { session: false }),
   validatorHandler(getUserSchema, 'params'),
   async (req, res, next)=>{
   try {
