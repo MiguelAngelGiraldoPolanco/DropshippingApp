@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",            
   "scripts": {
-    "build": "tsc",
+    "build": "echo \"No build needed for JS project\"",
     "lint": "eslint \"src\"",
     "start": "dotenv -c '.env' -- node src/app.js" 
   },

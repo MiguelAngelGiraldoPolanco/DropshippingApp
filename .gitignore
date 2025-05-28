@@ -1,0 +1,18 @@
+# Node
+node_modules/
+.env
+
+# Docker volumes
+postgres_data_2/
+
+# Logs
+*.log
+
+# Vite build
+dist/
+
+# AdminJS temporary
+.adminjs/
+
+# Stripe webhook history
+stripe-cli.log
