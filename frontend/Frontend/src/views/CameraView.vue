@@ -38,10 +38,10 @@ console.log(datos);
     </div>
 
     <!-- Espacio para componente futuro (agregar al carrito) -->
-    <div class="product-action-box">
-      <!-- Aquí luego insertas tu componente del carrito -->
+    <!-- <div class="product-action-box">
+       Aquí luego insertas tu componente del carrito 
       <p style="text-align:center; color:gray;">[Espacio para botón de añadir al carrito]</p>
-    </div>
+    </div> -->
   </div>
 
   <h1 v-else>Artículo No Encontrado</h1>

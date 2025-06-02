@@ -4,6 +4,7 @@ const passport = require('passport'); // middleware para la autenticacion de los
 const ProductsService = require('./../services/productsServices');
 const { bulkCreateProductSchema, createProductSchema ,updateProductSchema, getProductSchema, queryProductSchema } = require('./../schemas/productSchema');
 const validatorHandler = require('./../middlewares/validatorHandler');
+const { checkRoles } = require('../middlewares/authHandler');
 
 const router = express.Router();
 const service = new ProductsService();
@@ -34,6 +35,7 @@ router.get('/:id',
 );
 
 router.post('/',
+  checkRoles('admin'),
   // passport.authenticate('jwt', { session: false }),
   validatorHandler(createProductSchema, 'body'), // validador que creamos para asegurarnos que el producto que se crea tenga los requerimientos solicitados
   async (req, res, next)=>{
@@ -48,6 +50,7 @@ router.post('/',
 
 router.post(
   '/bulk',
+  checkRoles('admin'),
   validatorHandler(bulkCreateProductSchema, 'body'),
   async (req, res, next) => {
     try {
@@ -61,6 +64,7 @@ router.post(
 );
 
 router.patch('/:id',
+  checkRoles('admin'),
   // passport.authenticate('jwt', { session: false }),
   validatorHandler(getProductSchema, 'params'),
   validatorHandler(updateProductSchema, 'body'),
@@ -76,6 +80,7 @@ router.patch('/:id',
 });
 
 router.delete('/:id',
+  checkRoles('admin'),
   // passport.authenticate('jwt', { session: false }),
   validatorHandler(getProductSchema, 'params'),
   async (req, res, next)=>{

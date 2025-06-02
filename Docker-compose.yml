@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres_project2
+    environment:
+      - POSTGRES_DB=my_store
+      - POSTGRES_USER=miguel
+      - POSTGRES_PASSWORD=admin123
+    ports:
+      - 5433:5432
+    volumes:
+      - ./Backend/postgres_data_2:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_project2
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@mail.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - 5050:80
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  backend:
+    build: ./Backend
+    container_name: dropshipping-backend
+    restart: always
+    ports:
+      - "3005:3005"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: miguel
+      DB_PASSWORD: admin123
+      DB_NAME: my_store
+      PORT: 3005
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend/Frontend
+    container_name: dropshipping-frontend
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+  admin:
+    build: ./admin
+    container_name: dropshipping-admin
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: miguel
+      DB_PASSWORD: admin123
+      DB_NAME: my_store
+      PORT: 3000
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

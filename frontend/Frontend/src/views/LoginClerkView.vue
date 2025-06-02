@@ -29,12 +29,13 @@
   <script setup>
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import { clerk } from '../composables/clerk'; 
+  import { useClerk } from '@clerk/vue';
   import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/vue'
   
   const email = ref('');
   const password = ref('');
   const router = useRouter();
+  const clerk = useClerk();
   
   const handleLogin = async () => {
     try {
